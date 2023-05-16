@@ -4,7 +4,7 @@ import torch.backends.cudnn as cudnn
 from archs.cifar_resnet import resnet as resnet_cifar
 from archs.fashionmnist_conv import Conv2FC2full, Conv2FC2simple
 from archs.mnist_conv import Conv4FC3
-from datasets0 import get_normalize_layer
+from datasets import get_normalize_layer
 from torch.nn.functional import interpolate
 import torch.nn as nn
 
