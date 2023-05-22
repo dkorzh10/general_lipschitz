@@ -149,16 +149,16 @@ def grad_log_rho(x, phi1, b, c, type_of_transform):
 grad_log_rho_vect = equinox.filter_jit((jax.vmap(grad_log_rho, in_axes=(None, None, None, 0, None))))
 
 
-#Additional: Laplace density formula.
-def compute_log_rho_laplace(y, x, b, c, s):
-    x1 = attack(x, b)
-    J = jax.jacobian(phi, argnums=1)(x1, c)
-    M = J.T@J + (s**2)*jnp.eye(J.shape[1])
-    mu = (y-phi(x1, c)) + J@c
-    am = jnp.linalg.solve(M, J.T@mu) 
-    log_rho = -0.5*jnp.linalg.slogdet(M)[1] - 1/(2*s**2)*(jnp.dot(mu, mu) \
-                - jnp.dot(M@am, am)) - 0.5*jnp.log(2*jnp.pi) #The last term depends! on the dimension
-    return log_rho
+# #Additional: Laplace density formula.
+# def compute_log_rho_laplace(y, x, b, c, s):
+#     x1 = attack(x, b)
+#     J = jax.jacobian(phi, argnums=1)(x1, c)
+#     M = J.T@J + (s**2)*jnp.eye(J.shape[1])
+#     mu = (y-phi(x1, c)) + J@c
+#     am = jnp.linalg.solve(M, J.T@mu) 
+#     log_rho = -0.5*jnp.linalg.slogdet(M)[1] - 1/(2*s**2)*(jnp.dot(mu, mu) \
+#                 - jnp.dot(M@am, am)) - 0.5*jnp.log(2*jnp.pi) #The last term depends! on the dimension
+#     return log_rho
 
 
 
@@ -171,6 +171,7 @@ def compute_bound(x0, phi1, b_zero, b, c, type_of_transform):
     eta = eta - eta.mean()
     #eta = -c[:, 0] + c[:, 1]*jnp.exp(c[:, 0])*b[1]
     bound = jnp.cumsum(jnp.sort(eta)[::-1])/eta.shape[0] 
+
     return bound
 
 
@@ -199,8 +200,11 @@ def compute_normed_bounds(bound_fn, x, phi1, b_zero, betas, key, ns, d, type_of_
             g.append(0.0)
             bounds.append(jnp.zeros_like(bound))
     bounds = jnp.asarray(bounds)
+    print(bounds.shape)
     g = jnp.asarray(g)
+    print(g.shape)
     p = jnp.max(bounds, axis=0)
+    print(p.shape)
     return bounds, p, g
     
     
@@ -239,7 +243,7 @@ def g_to_hat_g(g_interpolated, beta, bzero):
     takes interpolated function g(beta) 
     and returns inegrated function hat{g}(beta) = int_beta0^beta g(beta)dbeta
     '''
-    g = g_interpolated
+    g = g_interpolated  # z
     a = bzero
     b = beta
 
