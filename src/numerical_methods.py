@@ -12,6 +12,40 @@ from csaps import csaps
 
 DEFAULT_SIGMA = 1.0
 
+rng = jax.random.PRNGKey(33)
+rng, key = jax.random.split(rng)
+
+normal_samples = jax.random.normal(key, [100_000])
+
+def norm_to_exp(c, lam):
+    idx = np.random.randint(0, len(normal_samples), (c.shape[0], 4))
+    q = normal_samples[idx]
+#     return jax.numpy.abs(c[0] * q[0] - q[1] * q[2]) / lam
+    
+    return jax.numpy.abs(q[:, 0] * q[:, 1] - q[:, 2] * q[:, 3]) / lam
+    
+    
+def norm_to_ray(c, sigma):
+    idx = np.random.randint(0, len(normal_samples), (c.shape[0], 2))
+    c01 = normal_samples[idx] * sigma 
+#     c = c * sigma
+    return jnp.sqrt(c01[:, 0] ** 2 + c01[:, 1] ** 2)
+
+
+def norm_to_exp_1d(c, lam):
+
+    idx = np.random.randint(0, len(normal_samples), 4)
+    q = normal_samples[idx]
+    
+    return jax.numpy.abs(c * q[1] - q[2] * q[3]) / lam
+    
+    
+def norm_to_ray_1d(c, sigma):
+    idx = np.random.randint(0, len(normal_samples), 2)
+    c01 = normal_samples[idx] * sigma 
+    c = c * sigma
+    return jnp.sqrt(c ** 2 + c01[1] ** 2)
+
 # def norm_to_exp(a):
 #     return jnp.log(2/jax.lax.erfc(a/jnp.sqrt(2)))
 
@@ -255,3 +289,153 @@ def g_to_hat_g(g_interpolated, beta, bzero):
 def safe_beta(xi, h, hat_g, beta):
     return hat_g(beta) <= -xi(1-h)+xi(0.5)
 
+
+def construct_gamma(sigma_b=0.4, sigma_c=0.4, sigma_tr=30, sigma_gamma=1.1, sigma_blur=30):
+    def _gamma(x, b, c, tr_type:str):
+
+        if tr_type == 'brightness':
+            c = c / DEFAULT_SIGMA * sigma_b
+            return b+c
+
+        if tr_type == 'cb':
+            # contrast then brightness
+            c0 = c[0] / DEFAULT_SIGMA * sigma_c
+            c1 = c[1] / DEFAULT_SIGMA * sigma_b
+#             print(sigma_c)
+            b1 = norm_to_lognorm(c0)*b[0]
+
+            b2 = b[1]*norm_to_lognorm(c0) + c1
+            return jnp.array([b1,b2])
+
+        if tr_type == 'gc': ##gamma-contrast
+            c0 = c[0] / DEFAULT_SIGMA
+            c1 = c[1] / DEFAULT_SIGMA * sigma_c
+
+            c0 = norm_to_ray_1d(c0, sigma_gamma)
+
+            b1 = b[0]*c0
+            b2 = b[1]**c0 * norm_to_lognorm(c1)
+            return jnp.array([b1, b2])
+
+
+        if tr_type == 'bt': 
+
+            c0 = c[0] / DEFAULT_SIGMA * sigma_b
+            c1 = c[1] / DEFAULT_SIGMA * sigma_tr
+            c2 = c[2] / DEFAULT_SIGMA * sigma_tr
+
+            b1 = b[0] + c0
+            b2 = b[1] + c1 
+            b3 = b[2] + c2
+            return jnp.array([b1, b2, b3])
+        if tr_type == 'cbt': #
+
+            c0 = norm_to_lognorm(c[0]*sigma_c)
+            c1 = c[1]*sigma_b
+            c2 = c[2]*sigma_tr
+            c3 = c[3]*sigma_tr
+
+
+
+            b0 = c0*b[0]
+            b1 = b[1]*c0 +c1
+            b2 = b[2] +c2
+            b3 = b[3] + c3
+
+            return jnp.array([b0,b1, b2, b3])
+
+
+        if tr_type == 'tbbc': #translation -  -Blur- Brightness - Contrast
+            # Norm(0, 1) -> Laplace(1/sigma_blur) -> Exp(sigma_blur)
+            c0 = c[0] / DEFAULT_SIGMA * sigma_tr
+            c1 = c[1] / DEFAULT_SIGMA * sigma_tr
+            c2 = c[2] / DEFAULT_SIGMA #* sigma_blur
+            c3 = c[3] / DEFAULT_SIGMA * sigma_b
+            c4 = c[5] / DEFAULT_SIGMA * sigma_c
+
+            x2 = jax.random.normal(key)
+            x3 = jax.random.normal(key)
+            x4 = jax.random.normal(key)
+            c2 = norm_to_exp_1d(c2, sigma_blur)
+            b0 = b[0] + c0
+            b1 = b[1] + c1
+    #         b2 = b[2] + norm_to_exp(c2) * sigma_blur
+            b2 = b[2] + c2
+            b3 = b[3] + c3 / b[4]
+            b4 = norm_to_lognorm(c4)*b[4]
+
+            return jnp.array([b0,b1,b2,b3,b4])
+
+        if tr_type == 'tbbc_ray': #translation -  -Blur- Brightness - Contrast
+
+            c0 = c[0] / DEFAULT_SIGMA * sigma_tr
+            c1 = c[1] / DEFAULT_SIGMA * sigma_tr
+            c2 = c[2] / DEFAULT_SIGMA
+            c3 = c[3] / DEFAULT_SIGMA * sigma_b
+            c4 = c[5] / DEFAULT_SIGMA * sigma_c
+
+
+
+            c2 = norm_to_ray_1d(c2, sigma_blur)
+
+            b0 = b[0] + c0
+            b1 = b[1] + c1
+            b2 = b[2] + c2
+            b3 = b[3] + c3 / b[4]
+            b4 = norm_to_lognorm(c4)*b[4]
+
+            return jnp.array([b0,b1,b2,b3,b4])
+
+        if tr_type == 'tr': #translation -  -Blur- Brightness - Contrast
+
+            c0 = c[0]*sigma_tr
+            c1 = c[1]*sigma_tr
+
+
+            b0 = b[0] + c0
+            b1 = b[1] + c1
+
+            return jnp.array([b0,b1])
+
+        if tr_type == 'ct': 
+
+            c0 = c[0] / DEFAULT_SIGMA *sigma_c
+            c1 = c[1] / DEFAULT_SIGMA *sigma_tr
+            c2 = c[2] / DEFAULT_SIGMA *sigma_tr
+
+
+            b0 = b[0] * norm_to_lognorm(c0)
+            b1 = b[1] + c1
+            b2 = b[2] + c2
+
+            return jnp.array([b0,b1,b2])
+        if tr_type == "gamma":
+
+            c0 = c[0] / DEFAULT_SIGMA
+
+            c0 = norm_to_ray_1d(c0, sigma_gamma)
+
+            b0 = b[0] * c0
+            return jnp.array([b0])
+
+
+        if tr_type == 'blur': 
+            # Norm(0, 1) -> Laplace(1/sigma_blur) -> Exp(sigma_blur)
+    #         idx = np.random.randint(0, len(normal_samples), 2)
+    #         c01, c02 = normal_samples[idx]
+    #         c0 = c[0] * sigma_blur 
+    #         c01 = c01 * sigma_blur
+    #         c02 = c02 * sigma_blur
+    #         b0 = b[0] + jnp.sqrt(c01 ** 2 + c02 ** 2)
+            b0 = b[0] + norm_to_exp_1d(c[0], sigma_blur)
+
+            return jnp.array([b0])
+
+        if tr_type == 'blur_ray': 
+            c0 = c[0] / DEFAULT_SIGMA
+            c0 = norm_to_ray_1d(c0, sigma_blur)
+            b0 = b[0] + c0
+    #         b0 = b[0] + norm_to_ray(c[0] / DEFAULT_SIGMA) * sigma_blur
+
+            return jnp.array([b0])
+    return _gamma
