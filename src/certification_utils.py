@@ -181,7 +181,7 @@ def Accuracy(model, loader, device):
 
     
 
-def ERA_Only_ND(model, loader, attack, device, PSN=None):
+def ERA_Only_ND(model, loader, attack, device, PSN=None, do_transform=False):
     model.eval()
     model.to(device)
     with torch.no_grad():
@@ -193,10 +193,11 @@ def ERA_Only_ND(model, loader, attack, device, PSN=None):
                 labels = labels.to(device)
                 
                 for b in PSN:
-                    # b = torch.tensor(np.array(b))
+                    if do_transform:
+                        b = torch.tensor(np.array(b))
                     b = torch.tensor(b)
                     attacked = attack(images, b=b)
-                    attacked = torch.tensor(attacked)
+#                     attacked = torch.tensor(attacked)
 #                     attacked_batch = torch.repeat_interleave(attacked, nsamples, dim=0)
                     labels = labels.to(device)
                     y_pred = torch.nn.Softmax(dim=-1)(model(attacked))#.argmax(dim=-1)
