@@ -90,6 +90,6 @@ xi, hatg_int = res_gc
 ```
 See `notebooks/Training_more_robust_models_TBBC_AND_BT.ipynb` as an example of training procedure (or do it as [TSS](https://github.com/AI-secure/semantic-randomized-smoothing) prescribes, but we have optimized training for 1 GPU and sometimes different transforms and smoothing distributions). You should create 2 function for specific attacks and smoothing in order to augment data during training.
 
-Put in `checpoints` models' weights  from [here](https://drive.google.com/file/d/1gQVjx6WBh9PacDJDDdrHjEjM87o_MQEd/view?usp=sharing) or from [here (old ones)](https://drive.google.com/file/d/1TjXJUN_0wgBv-3mmkQGyIrvEP7nlOMe-/view?usp=sharing).
+Put in `checpoints` models' weights  from [here](https://drive.google.com/file/d/1gQVjx6WBh9PacDJDDdrHjEjM87o_MQEd/view?usp=sharing).
 
 Our code is partially based on [TSS' implementation](https://github.com/AI-secure/semantic-randomized-smoothing). You can read their Readme also for some details.
