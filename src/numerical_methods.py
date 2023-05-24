@@ -399,12 +399,12 @@ def construct_gamma(sigma_b=0.4, sigma_c=0.4, sigma_tr=30, sigma_gamma=1.1, sigm
 
         if tr_type == 'ct': 
 
-            c0 = c[0] / DEFAULT_SIGMA *sigma_c
+            c0 = c[0] / DEFAULT_SIGMA * sigma_c
             c1 = c[1] / DEFAULT_SIGMA *sigma_tr
             c2 = c[2] / DEFAULT_SIGMA *sigma_tr
 
 
-            b0 = b[0] * norm_to_lognorm(c0)
+            b0 = b[0] * jnp.exp(c0) #norm_to_lognorm(c0)
             b1 = b[1] + c1
             b2 = b[2] + c2
 

@@ -50,7 +50,7 @@ def construct_phi(tr_type, device, sigma_b=0.4, sigma_c=0.4, sigma_tr=30, sigma_
         contr = (torch.randn(len(x)) * sigma_c)
         contr = contr[:, None, None, None]
         x = contr.to(x.device) * x
-        print("I'm here")
+#         print("I'm here")
         c1 = (torch.randn(len(x)) * sigma_tr).long()*1.0
         c2 = (torch.randn(len(x)) * sigma_tr).long()*1.0
 
@@ -111,6 +111,8 @@ def construct_phi(tr_type, device, sigma_b=0.4, sigma_c=0.4, sigma_tr=30, sigma_
         return _phi_bt_torch_batch_and_noise
     elif tr_type == "ct":
         return _phi_ct_torch_batch_and_noise
+    elif tr_type == "cbt":
+        return _phi_cbt_torch_batch_and_noise
     elif tr_type == "tr":
         return _phi_tr_torch_batch_and_noise
     elif tr_type == "gamma":
@@ -132,7 +134,7 @@ def attack_bt_torch(x, b):
 
 def attack_ct_torch(x, b):
     x = b[0] * x
-    translation = torch.tensor([[b[1], b[2]]]).float.to(x.device)
+    translation = torch.tensor([[b[1], b[2]]]).to(x.device)
     out = kornia.geometry.transform.translate(x, translation, padding_mode='reflection')
     return out
 
