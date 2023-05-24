@@ -22,7 +22,6 @@ def construct_phi(tr_type, device, sigma_b=0.4, sigma_c=0.4, sigma_tr=30, sigma_
 
         q1 = (torch.randn(len(x)) * sigma_c).to(device)
 
-
         q = q[:, None, None, None]
         q1 = torch.exp(q1[:,None,None,None]) ## Norm to Lornorm
         return (x**q) * q1
