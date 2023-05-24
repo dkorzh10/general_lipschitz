@@ -92,4 +92,4 @@ See `notebooks/Training_more_robust_models_TBBC_AND_BT.ipynb` as an example of t
 
 Put in `checpoints` models' weights  from [here](https://drive.google.com/file/d/1gQVjx6WBh9PacDJDDdrHjEjM87o_MQEd/view?usp=sharing) or from [here (old ones)](https://drive.google.com/file/d/1TjXJUN_0wgBv-3mmkQGyIrvEP7nlOMe-/view?usp=sharing).
 
-Our code is partially based on [TSS' implementation](https://github.com/AI-secure/semantic-randomized-smoothing). You can read their Readme also for some details.
+Our code is partially based on [TSS' implementation](https://github.com/AI-secure/semantic-randomized-smoothing). You can also read their Readme for some details.
