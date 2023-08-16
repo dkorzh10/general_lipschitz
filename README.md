@@ -93,3 +93,26 @@ See `notebooks/Training_more_robust_models_TBBC_AND_BT.ipynb` as an example of t
 Put in `checpoints` models' weights  from [here](https://drive.google.com/file/d/1gQVjx6WBh9PacDJDDdrHjEjM87o_MQEd/view?usp=sharing).
 
 Our code is partially based on [TSS' implementation](https://github.com/AI-secure/semantic-randomized-smoothing). You can read their Readme also for some details.
+
+In case of problems with cv2,
+```
+pip uninstall opencv-python
+pip uninstall opencv-python-headless
+
+python -m site
+```
+Delete all cv2, opencv..  dirs from /opt/conda/lib/python3.8/site-packages
+
+follow the instructions
+https://itsmycode.com/importerror-libgl-so-1-cannot-open-shared-object-file-no-such-file-or-directory/ :
+```
+apt-get update
+apt-get install ffmpeg libsm6 libxext6  -y
+
+apt-get update && apt-get install -y python3-opencv
+pip install opencv-python
+```
+
+```python
+
+```

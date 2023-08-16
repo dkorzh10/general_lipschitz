@@ -23,8 +23,8 @@ def norm_to_exp(c, lam):
 #     return jax.numpy.abs(c[0] * q[0] - q[1] * q[2]) / lam
     
     return jax.numpy.abs(q[:, 0] * q[:, 1] - q[:, 2] * q[:, 3]) / lam
-    
-    
+
+
 def norm_to_ray(c, sigma):
     idx = np.random.randint(0, len(normal_samples), (c.shape[0], 2))
     c01 = normal_samples[idx] * sigma 
@@ -38,8 +38,8 @@ def norm_to_exp_1d(c, lam):
     q = normal_samples[idx]
     
     return jax.numpy.abs(c * q[1] - q[2] * q[3]) / lam
-    
-    
+
+
 def norm_to_ray_1d(c, sigma):
     idx = np.random.randint(0, len(normal_samples), 2)
     c01 = normal_samples[idx] * sigma 
@@ -228,7 +228,7 @@ def compute_normed_bounds(bound_fn, x, phi1, b_zero, betas, key, ns, d, type_of_
                 bounds.append(bound / jnp.max(bound))
             else:
                 bounds.append(jnp.zeros_like(bound))
-            g.append(jnp.max(bound) * jnp.linalg.norm(beta-b_zero))
+            g.append(jnp.max(bound) * jnp.linalg.norm(beta-b_zero))  # jnp.linalg.norm(beta-b_zero)
         else:
             bound = bound_fn(x, phi1, b_zero, beta, c, type_of_transform)
             g.append(0.0)
@@ -240,10 +240,10 @@ def compute_normed_bounds(bound_fn, x, phi1, b_zero, betas, key, ns, d, type_of_
     p = jnp.max(bounds, axis=0)
     print(p.shape)
     return bounds, p, g
+
     
-    
-    
-    
+
+
 def pseudo_xi(norm_bound):
     N = len(norm_bound)
     x_axis = np.linspace(0,1,N)
@@ -270,7 +270,7 @@ class gt:
         z = (1-t)*self.a + t*self.b
         return self.f(z.tolist())
 
-    
+
 def g_to_hat_g(g_interpolated, beta, bzero):
     
     '''
@@ -284,7 +284,7 @@ def g_to_hat_g(g_interpolated, beta, bzero):
     gt_f = gt(g, a, b)
     return scipy.integrate.quad(func=gt_f, epsabs=1e-4, epsrel=1e-3, a=0.0, b=1.0)[0]
 
-### safe_beta given functions $\xi$,  and points $h(\beta)$, $\beta$ returns if $h$ is certified at $\beta$
+# ## safe_beta given functions $\xi$,  and points $h(\beta)$, $\beta$ returns if $h$ is certified at $\beta$
 
 def safe_beta(xi, h, hat_g, beta):
     return hat_g(beta) <= -xi(1-h)+xi(0.5)
