@@ -292,16 +292,19 @@ def safe_beta(xi, h, hat_g, beta):
 
 def construct_gamma(sigma_b=0.4, sigma_c=0.4, sigma_tr=30, sigma_gamma=1.1, sigma_blur=30):
     def _gamma(x, b, c, tr_type:str):
-
-        if tr_type == 'brightness':
+        print(tr_type)
+        if tr_type == 'b':
             c = c / DEFAULT_SIGMA * sigma_b
             return b+c
+        
+        if tr_type == 'c':
+            c = norm_to_lognorm(c / DEFAULT_SIGMA * sigma_c)
+            return c * b
 
         if tr_type == 'cb':
             # contrast then brightness
             c0 = c[0] / DEFAULT_SIGMA * sigma_c
             c1 = c[1] / DEFAULT_SIGMA * sigma_b
-#             print(sigma_c)
             b1 = norm_to_lognorm(c0)*b[0]
 
             b2 = b[1]*norm_to_lognorm(c0) + c1
@@ -419,7 +422,7 @@ def construct_gamma(sigma_b=0.4, sigma_c=0.4, sigma_tr=30, sigma_gamma=1.1, sigm
             return jnp.array([b0])
 
 
-        if tr_type == 'blur': 
+        if tr_type == 'blur_exp': 
             # Norm(0, 1) -> Laplace(1/sigma_blur) -> Exp(sigma_blur)
     #         idx = np.random.randint(0, len(normal_samples), 2)
     #         c01, c02 = normal_samples[idx]
@@ -436,6 +439,5 @@ def construct_gamma(sigma_b=0.4, sigma_c=0.4, sigma_tr=30, sigma_gamma=1.1, sigm
             c0 = norm_to_ray_1d(c0, sigma_blur)
             b0 = b[0] + c0
     #         b0 = b[0] + norm_to_ray(c[0] / DEFAULT_SIGMA) * sigma_blur
-
             return jnp.array([b0])
     return _gamma

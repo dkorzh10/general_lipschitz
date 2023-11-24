@@ -4,24 +4,24 @@ from tqdm import tqdm
 from scipy import stats
 from statsmodels.stats.proportion import proportion_confint
 
-num_classes = 1000
 
 
-def certify(base_classifier,  x, label, Phi, n0, maxn, alpha, batch_size, adaptive=False, device=None):
+
+def certify(base_classifier,  x, label, Phi, n0, maxn, alpha, batch_size, adaptive=False, device=None, num_classes=None):
 
     base_classifier.eval()
     x=x.to(device)
     nA, n = 0, 0
     g_phi_list = np.zeros((1,num_classes))
     
-    _, counts_selection = sample_noise(base_classifier,x, Phi, n0, device)
+    _, counts_selection = sample_noise(base_classifier,x, Phi, n0, device, num_classes)
     cAHat = counts_selection.argmax().item()
             
             
     while n < maxn:
         now_batch = min(batch_size, maxn - n)
         # draw more samples of f(x + epsilon)
-        g_phi, counts_estimation = sample_noise(base_classifier, x, Phi, now_batch, device)
+        g_phi, counts_estimation = sample_noise(base_classifier, x, Phi, now_batch, device, num_classes)
         
         
         ### TSS things Clopper-Pearson ###
@@ -57,7 +57,7 @@ def certify(base_classifier,  x, label, Phi, n0, maxn, alpha, batch_size, adapti
     # return left[0], right[1], G_CORRECT_PREDICTION_VIA_I, G_CORRECT_PREDICTION_VIA_CI, pABar, cAHat
     return pABar, cAHat
 
-def sample_noise(base_classifier, x, Phi, num, device):
+def sample_noise(base_classifier, x, Phi, num, device, num_classes):
     f_x_eps_list = np.zeros((1,num_classes))
     with torch.no_grad():
         counts = np.zeros(num_classes, dtype=int)
@@ -134,7 +134,7 @@ def CertAccCheckerTSS(betas, hlist, xi, safe_beta_tss):
     return None
 
 
-def pa_isOk_collector(model, loader, Phi, device, n0=100, maxn=2000, alpha=1e-3, batch_size=128, adaptive=False):
+def pa_isOk_collector(model, loader, Phi, device, n0=100, maxn=2000, alpha=1e-3, batch_size=128, adaptive=False, num_classes=2):
     model.eval()
     model.to(device)
     pas = []
@@ -145,7 +145,7 @@ def pa_isOk_collector(model, loader, Phi, device, n0=100, maxn=2000, alpha=1e-3,
     with torch.no_grad():
         for k, (image, label) in enumerate(tqdm(loader)):
             # h, pb, _, correct_or_not, pABar, cAHat = certify(model,  image[0], label, Phi, n0,   maxn, alpha, batch_size, adaptive)
-            pABar, cAHat = certify(model,  image[0], label, Phi, n0,  maxn, alpha, batch_size, adaptive, device)
+            pABar, cAHat = certify(model,  image[0], label, Phi, n0,  maxn, alpha, batch_size, adaptive, device, num_classes)
             # pas.append(h.item())
             # isOk.append(correct_or_not)
             paTSS.append(pABar)
