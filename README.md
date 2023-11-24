@@ -94,19 +94,25 @@ Put in `checkpoints` models' weights  from [here](https://drive.google.com/file/
 
 Our code is partially based on [TSS' implementation](https://github.com/AI-secure/semantic-randomized-smoothing). You can read their Readme also for some details.
 
-In case of problems with installation opencv, try this:
 
+
+In case of problems with cv2,
 ```
-pip uninstall opencv-python -y
-pip uninstall opencv-python-headless -y
+pip uninstall opencv-python
+pip uninstall opencv-python-headless
 
 python -m site
 ```
-delete all cv2, opencv..  dirs from /opt/conda/lib/python3.8/site-packages, following the [instructions](https://itsmycode.com/importerror-libgl-so-1-cannot-open-shared-object-file-no-such-file-or-directory/)
+Delete all cv2, opencv..  dirs from /opt/conda/lib/python3.8/site-packages
+
+follow the instructions
+https://itsmycode.com/importerror-libgl-so-1-cannot-open-shared-object-file-no-such-file-or-directory/ :
+
 ```
 apt-get update
 apt-get install ffmpeg libsm6 libxext6  -y
 
 apt-get update && apt-get install -y python3-opencv
 pip install opencv-python
+
 ```

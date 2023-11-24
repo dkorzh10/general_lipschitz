@@ -71,7 +71,7 @@ def sample_noise(base_classifier, x, Phi, num, device, num_classes):
         counts +=count_arr(predictions.cpu().numpy(), num_classes)
         
         return f_x_eps_list[1:], counts #counts
-    
+
 def count_arr(arr, length) -> np.ndarray:  #might be accelerated probably
     counts = np.zeros(length, dtype=int)
     for idx in arr:
@@ -117,8 +117,8 @@ def CertAccChecker(safe_beta, betas, hlist, xi, hatg_int):
         if flag==True:
             return h
     return None
-    
-    
+
+
 def CertAccCheckerTSS(betas, hlist, xi, safe_beta_tss):
     for h in hlist:
         flag = True
@@ -160,8 +160,8 @@ def pa_isOk_collector(model, loader, Phi, device, n0=100, maxn=2000, alpha=1e-3,
     
     # return pas, isOk, paTSS, isOkTSS
     return paTSS, isOkTSS
-        
-    
+
+
 def Accuracy(model, loader, device):
     model.eval()
     isCor = []
@@ -179,7 +179,7 @@ def Accuracy(model, loader, device):
     return isCor
 
 
-    
+
 
 def ERA_Only_ND(model, loader, attack, device, PSN=None, do_transform=False):
     model.eval()

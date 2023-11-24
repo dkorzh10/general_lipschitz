@@ -40,7 +40,7 @@ def construct_phi(tr_type, device, sigma_b=0.4, sigma_c=0.4, sigma_tr=30, sigma_
         return (x**q) * q1
     
     def _phi_bt_torch_batch_and_noise(x, sigma=sigma_b, tau=sigma_tr):
-        
+
 #         x = x.to(device)
         q = torch.randn(len(x)) * sigma
         q = q[:,None,None,None]
@@ -355,6 +355,7 @@ def safe_beta_tss(tr_type, sigma_c=None, sigma_b=None, sigma_tr=None):
         l3 = (beta[2]/tau)**2
         l = np.sqrt(l1+l2+l3)
         r = 1/2*(xi(h) - xi(1-h))
+        return l <= r
         
         return l <= r
         
@@ -382,7 +383,7 @@ def safe_beta_tss(tr_type, sigma_c=None, sigma_b=None, sigma_tr=None):
         return _safe_beta_tss_bt
     elif tr_type == "tr":
         return _safe_beta_tss_tr
-    
+
 
 
 

@@ -13,7 +13,7 @@ def imshow(inp, title=None):
         plt.title(title)
     plt.pause(0.001)
 
-    
+
 class CustomAudioDataset(Dataset):
 
     def __init__(self, images, labels):
