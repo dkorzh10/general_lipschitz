@@ -4,9 +4,9 @@ Numerical experiments
 
 Algorithms for certification DL models to sematic transformations.
 
-To start, install required libraries `pip install -r requirenments.txt`, set suitable path to ImageNet dataset in `datasets.py`.
+To start, install required libraries `pip install -r requirements.txt`, set suitable path to ImageNet dataset in `datasets.py`.
 
-To obtain results, run through `notebooks/main_notebook.ipynb`. You should choose the perturbation you want to certify the model to in `gamma` (for numericall calculations of required functions), choose parameters of smoothing distributions (scale parameters), create or initialize two function: attack (for ERA) and smoothing phi (for certification and augmentations during training):
+To obtain results, run through `notebooks/main_notebook.ipynb` and `notebooks/CT_CBT_TBlBC.ipynb`. You should choose the perturbation you want to certify the model to in `gamma` (for numericall calculations of required functions), choose parameters of smoothing distributions (scale parameters), create or initialize two function: attack (for ERA) and smoothing phi (for certification and augmentations during training):
 For example, for Gamma and Contrast
 ```
 sigma_c = 0.1
@@ -90,6 +90,23 @@ xi, hatg_int = res_gc
 ```
 See `notebooks/Training_more_robust_models_TBBC_AND_BT.ipynb` as an example of training procedure (or do it as [TSS](https://github.com/AI-secure/semantic-randomized-smoothing) prescribes, but we have optimized training for 1 GPU and sometimes different transforms and smoothing distributions). You should create 2 function for specific attacks and smoothing in order to augment data during training.
 
-Put in `checpoints` models' weights  from [here](https://drive.google.com/file/d/1gQVjx6WBh9PacDJDDdrHjEjM87o_MQEd/view?usp=sharing).
+Put in `checkpoints` models' weights  from [here](https://drive.google.com/file/d/1gQVjx6WBh9PacDJDDdrHjEjM87o_MQEd/view?usp=sharing).
 
 Our code is partially based on [TSS' implementation](https://github.com/AI-secure/semantic-randomized-smoothing). You can read their Readme also for some details.
+
+In case of problems with installation opencv, try this:
+
+```
+pip uninstall opencv-python -y
+pip uninstall opencv-python-headless -y
+
+python -m site
+```
+delete all cv2, opencv..  dirs from /opt/conda/lib/python3.8/site-packages, following the [instructions](https://itsmycode.com/importerror-libgl-so-1-cannot-open-shared-object-file-no-such-file-or-directory/)
+```
+apt-get update
+apt-get install ffmpeg libsm6 libxext6  -y
+
+apt-get update && apt-get install -y python3-opencv
+pip install opencv-python
+```
