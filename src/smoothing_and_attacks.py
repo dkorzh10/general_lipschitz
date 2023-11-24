@@ -334,7 +334,7 @@ def attack_blur_cv2(x, b):
     r = r.item()
     out = cv2.GaussianBlur(input.transpose(1, 2, 0), (0, 0), np.sqrt(r), borderType=cv2.BORDER_REFLECT101)
     out = torch.from_numpy(out.transpose(2, 0, 1))
-    return out[None, :].to(device)
+    return out[None, :].to(x.device)
 
 
 
