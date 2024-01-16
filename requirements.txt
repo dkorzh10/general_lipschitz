@@ -6,13 +6,13 @@ kornia==0.6.12
 numpy==1.23.5
 pandas==2.0.1
 notebook==6.4.1
-tqdm
+tqdm==4.62.3
 llvmlite==0.35.0
-torch==1.9.0
-torchvision
+torch==1.10.1
+torchvision==0.11.2
 scipy==1.9.1
 scikit-learn==1.0
 statsmodels==0.14.0
-opencv-python==4.7.0.72
 matplotlib==3.4.3
 wandb==0.15.2
+imgaug==0.4.0

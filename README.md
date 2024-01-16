@@ -8,7 +8,7 @@ To start, install required libraries `pip install -r requirements.txt`, set suit
 
 To obtain results, run through `notebooks/main_notebook.ipynb` and `notebooks/CT_CBT_TBlBC.ipynb`. You should choose the perturbation you want to certify the model to in `gamma` (for numericall calculations of required functions), choose parameters of smoothing distributions (scale parameters), create or initialize two function: attack (for ERA) and smoothing phi (for certification and augmentations during training):
 For example, for Gamma and Contrast
-```
+```python
 sigma_c = 0.1
 sigma_gamma = 0.1
 
@@ -41,12 +41,12 @@ def _phi_gc_torch_batch_and_noise(x, sigma_g=sigma_gamma, sigma_c=sigma_c):
 ```
 or
 
-```
+```python
 type_of_transform = 'gc'
 Phi = construct_phi(type_of_transform, device, sigma_gamma=sigma_gamma, sigma_c=sigma_c)
 ```
 Example of numericall estimations of g(beta)
-```
+```python
 ns = 10000
 x0 = jnp.array([1.1,0.3]) # WHATEVER point
 d = 2 ## number of transformation parameters
@@ -72,7 +72,7 @@ hatg_int = csaps([betas1, betas2], hat_g.reshape(*betas1.shape, *betas2.shape)) 
 
 ```
 or use prepare function
-```
+```python
 ns = 20000
 b_zero = jnp.array([1.0, 1.0])
 x0 = jnp.array([1.1, 1.3]) # Whatever
