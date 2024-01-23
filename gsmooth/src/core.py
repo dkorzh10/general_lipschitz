@@ -270,7 +270,7 @@ class TSmooth(object):
                 else:
 
                     batch_corrupt, _ = self.corruptor.batchapply(x.cpu(),this_batch_size)
-                    batch_corrupt = batch_corrupt.cuda()
+#                     batch_corrupt = batch_corrupt.cuda()
                 # print(batch_corrupt,batch_corrupt.shape,this_batch_size)
                 predictions = self.base_classifier(batch_corrupt).argmax(1)
                 counts += self._count_arr(predictions.cpu().numpy(), self.num_classes)

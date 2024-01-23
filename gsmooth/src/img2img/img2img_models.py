@@ -58,7 +58,7 @@ def img2img_get_model(args, img_size, param_size, parallel=False) -> torch.nn.Mo
     if parallel == True:
         model = torch.nn.DataParallel(model)
         print('Using parallel training')
-    model = model.cuda()
+#     model = model.cuda()
     # normalize_layer = get_normalize_layer(dataset)
     return model
 
