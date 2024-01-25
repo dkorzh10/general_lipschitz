@@ -10,7 +10,8 @@ import numpy as np
 # set this environment variable to the location of your imagenet directory if you want to read ImageNet data.
 # make sure your val directory is preprocessed to look like the train directory, e.g. by running this script
 # https://raw.githubusercontent.com/soumith/imagenetloader.torch/master/valprep.sh
-IMAGENET_LOC_ENV = "./img2img/dataset_cache/tiny-imagenet-200"
+IMAGENET_LOC_ENV = "IMAGENET_DIR"
+os.environ[IMAGENET_LOC_ENV] = "/workspace/mnt/local/dataset/by-domain/cv/imagenet"
 
 # list of all datasets
 DATASETS = ["imagenet", "cifar10", "mnist"]

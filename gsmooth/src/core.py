@@ -86,7 +86,7 @@ class Smooth(object):
                 num -= this_batch_size
 
                 batch = x.repeat((this_batch_size, 1, 1, 1))
-                noise = torch.randn_like(batch, device='cuda') * self.sigma
+                noise = torch.randn_like(batch, device=x.device) * self.sigma
                 predictions = self.base_classifier(batch + noise).argmax(1)
                 counts += self._count_arr(predictions.cpu().numpy(), self.num_classes)
             return counts
@@ -269,8 +269,8 @@ class TSmooth(object):
 
                 else:
 
-                    batch_corrupt, _ = self.corruptor.batchapply(x.cpu(),this_batch_size)
-#                     batch_corrupt = batch_corrupt.cuda()
+                    batch_corrupt, _ = self.corruptor.batchapply(x.cpu(),this_batch_size)  # x.cpu()
+                    batch_corrupt = batch_corrupt.to(x.device) #cuda()
                 # print(batch_corrupt,batch_corrupt.shape,this_batch_size)
                 predictions = self.base_classifier(batch_corrupt).argmax(1)
                 counts += self._count_arr(predictions.cpu().numpy(), self.num_classes)

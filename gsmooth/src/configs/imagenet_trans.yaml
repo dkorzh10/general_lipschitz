@@ -1,0 +1,9 @@
+corrupt: "translate"
+noise_sd: 50
+noise_dst: "gaussian"
+partial_max: 79
+dataset: "imagenet"
+base_classifier: "../../checkpoints/trans_blur_bright_contrast/TransBrightBlurContrast_40_04_10_04_checkpoint.pth.tar"
+device: "cuda"
+arch: "resnet50"
+gpu: 5

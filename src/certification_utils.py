@@ -1,6 +1,6 @@
 import numpy as np
 import torch
-from tqdm import tqdm
+from tqdm.auto import tqdm
 from scipy import stats
 from statsmodels.stats.proportion import proportion_confint
 
@@ -107,7 +107,7 @@ def confint(I, V, n, alpha, test='Normal'):
 def CertAccChecker(safe_beta, betas, hlist, xi, hatg_int):
     for h in hlist:
         flag = True
-        for i, beta in enumerate(tqdm(betas)):
+        for i, beta in enumerate(betas):  # for i, beta in enumerate(tqdm(betas)):
             if safe_beta(xi, h, hatg_int, [*beta]).item():
                 pass
             else:
@@ -122,7 +122,7 @@ def CertAccChecker(safe_beta, betas, hlist, xi, hatg_int):
 def CertAccCheckerTSS(betas, hlist, xi, safe_beta_tss):
     for h in hlist:
         flag = True
-        for i, beta in enumerate(tqdm(betas)):
+        for i, beta in enumerate(betas):  # for i, beta in enumerate(tqdm(betas)):
             if safe_beta_tss(xi, h, [*beta]).item():
                 pass
             else:

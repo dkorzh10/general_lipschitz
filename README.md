@@ -6,7 +6,7 @@ Algorithms for certification DL models to sematic transformations.
 
 To start, install required libraries from `requirements.txt`, set suitable path to ImageNet dataset in `datasets.py`.
 
-To obtain results, run through `notebooks/main_notebook.ipynb` and `notebooks/CT_CBT_TBlBC_rename.ipynb`. You should choose the perturbation you want to certify the model to in `gamma` (for numericall calculations of required functions), choose parameters of smoothing distributions (scale parameters), create or initialize two function: attack (for ERA) and smoothing phi (for certification and augmentations during training):
+To obtain results, run through `notebooks/main_notebook_rename.ipynb` and `notebooks/CT_CBT_TBlBC_rename.ipynb`. You should choose the perturbation you want to certify the model to in `gamma` (for numericall calculations of required functions), choose parameters of smoothing distributions (scale parameters), create or initialize two function: attack (for ERA) and smoothing phi (for certification and augmentations during training):
 For example, for Gamma and Contrast
 ```python
 sigma_c = 0.1
@@ -88,9 +88,15 @@ attack = attack_gc_torch
 res_gc = construct_bounds(ns, b_zero, x0, d, betas_list, type_of_transform)
 xi, hatg_int = res_gc
 ```
-See `notebooks/Training_more_robust_models_TBBC_AND_BT.ipynb` as an example of training procedure (or do it as [TSS](https://github.com/AI-secure/semantic-randomized-smoothing) prescribes, but we have optimized training for 1 GPU and sometimes different transforms and smoothing distributions). You should create 2 function for specific attacks and smoothing in order to augment data during training.
+See `notebooks/Training_more_robust_models_TBBC_AND_BT.ipynb` as an example of training procedure (or do it as [TSS](https://github.com/AI-secure/semantic-randomized-smoothing) prescribes, but we have optimized training for 1 GPU and sometimes different transforms and smoothing distributions). You should create 2 function for specific attacks and smoothing in order to augment data during training or run `train.py`, e.g.
+```
+python train.py --run_name cifar10_trans  --dataset cifar10 --arch cifar_resnet110 --type tr --epochs 150  --lr_step_size 50 --batch 512 --device cuda:0 --lr 0.01 --tr 15.0 --lbd 10
 
-Put in `checkpoints` directory models' weights  from [here](https://drive.google.com/file/d/1gQVjx6WBh9PacDJDDdrHjEjM87o_MQEd/view?usp=sharing). Put in `new_results` directory models' weights  from [here](---). Put in `tss_weights` directory models' weights  from TTS link [here](https://drive.google.com/file/d/1tW4bTnoxlAFA0KeZGQdHr6Rr9weXJSDS/view?usp=sharing). Don't forget to unzip files them.
+python train.py --run_name cifar100_cb  --dataset cifar100 --arch cifar100_resnet110 --type cb --epochs 150  --lr_step_size 50 --batch 512 --device cuda:5 --lr 0.004 --lbd 10 --sigma_c 0.6 --sigma_b 0.6
+
+```
+
+Put in `checkpoints` directory models' weights  from [here](https://drive.google.com/file/d/1gQVjx6WBh9PacDJDDdrHjEjM87o_MQEd/view?usp=sharing). Put in `new_results` directory models' weights  from [here](---). Put in `tss_weights` directory models' weights  from TTS link [here](https://drive.google.com/file/d/1tW4bTnoxlAFA0KeZGQdHr6Rr9weXJSDS/view?usp=sharing). Don't forget to unzip the downoloaded files.
 
 
 Our code is partially based on [TSS' implementation](https://github.com/AI-secure/semantic-randomized-smoothing). You can read their Readme also for some details.

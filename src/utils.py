@@ -13,6 +13,21 @@ def imshow(inp, title=None):
         plt.title(title)
     plt.pause(0.001)
 
+def make_our_dataset_v2(data, idxes):
+    images = []
+    labels = []
+    k = 0
+    for i in tqdm(range(len(idxes))):
+        image, label = data[idxes[i]]
+        images.append(image.numpy())
+        
+        labels.append(label)
+
+    images = np.array(images)
+    labels = np.array(labels)
+    dataset = CustomAudioDataset(images, labels)
+    return dataset
+
 
 class CustomAudioDataset(Dataset):
 
@@ -26,7 +41,7 @@ class CustomAudioDataset(Dataset):
     
     def __getitem__(self, idx):
         image = self.images[idx]
-        label =self.labels[idx]
+        label = self.labels[idx]
         return image, label
 
 
