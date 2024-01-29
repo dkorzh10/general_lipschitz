@@ -5,6 +5,8 @@ notebooks/dataset_cache/
 dataset_cache/
 tss_weights/
 wandb/
+new_results.tar.gz
+new_results/
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
