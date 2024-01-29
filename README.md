@@ -110,10 +110,9 @@ pip uninstall opencv-python-headless
 
 python -m site
 ```
-Delete all cv2, opencv..  dirs from /opt/conda/lib/python3.8/site-packages
+Delete all cv2, opencv..  dirs from /opt/conda/lib/pythonX.Y/site-packages
 
-follow the [instructions]
-(https://itsmycode.com/importerror-libgl-so-1-cannot-open-shared-object-file-no-such-file-or-directory/) :
+follow the [instructions](https://itsmycode.com/importerror-libgl-so-1-cannot-open-shared-object-file-no-such-file-or-directory/):
 
 ```
 apt-get update
