@@ -1,10 +1,10 @@
 # General Lipschitz framework
 
-Numerical experiments
 
 Algorithms for certification DL models to sematic transformations.
 
-To start, install required libraries from `requirements.txt`, set suitable path to ImageNet dataset in `datasets.py`.
+To start, 
+create an image with `nvcr.io/nvidia/pytorch:23.10-py3` container, install required libraries from `requirements.txt`, set suitable path to ImageNet dataset in `datasets.py`, and set up Jupyter lab.
 
 To obtain results, run through `notebooks/main_notebook_rename.ipynb` and `notebooks/CT_CBT_TBlBC_rename.ipynb`. You should choose the perturbation you want to certify the model to in `gamma` (for numericall calculations of required functions), choose parameters of smoothing distributions (scale parameters), create or initialize two function: attack (for ERA) and smoothing phi (for certification and augmentations during training):
 For example, for Gamma and Contrast
@@ -96,7 +96,7 @@ python train.py --run_name cifar100_cb  --dataset cifar100 --arch cifar100_resne
 
 ```
 
-Put in `checkpoints` directory models' weights  from [here](https://drive.google.com/file/d/1gQVjx6WBh9PacDJDDdrHjEjM87o_MQEd/view?usp=sharing). Put in `new_results` directory models' weights  from [here](---). Put in `tss_weights` directory models' weights  from TTS link [here](https://drive.google.com/file/d/1tW4bTnoxlAFA0KeZGQdHr6Rr9weXJSDS/view?usp=sharing). Don't forget to unzip the downoloaded files.
+Put in `checkpoints` directory models' weights  from [here](https://drive.google.com/file/d/1gQVjx6WBh9PacDJDDdrHjEjM87o_MQEd/view?usp=sharing). Put in `new_results` directory models' weights  from [here](https://drive.google.com/file/d/1P-ukSuRU6cBCeiG1K4ymZsZAEfvwOraU/view?usp=sharing). Put in `tss_weights` directory models' weights  from TTS link [here](https://drive.google.com/file/d/1tW4bTnoxlAFA0KeZGQdHr6Rr9weXJSDS/view?usp=sharing). Don't forget to unzip the downoloaded files.
 
 
 Our code is partially based on [TSS' implementation](https://github.com/AI-secure/semantic-randomized-smoothing). You can read their Readme also for some details.
@@ -112,8 +112,8 @@ python -m site
 ```
 Delete all cv2, opencv..  dirs from /opt/conda/lib/python3.8/site-packages
 
-follow the instructions
-https://itsmycode.com/importerror-libgl-so-1-cannot-open-shared-object-file-no-such-file-or-directory/ :
+follow the [instructions]
+(https://itsmycode.com/importerror-libgl-so-1-cannot-open-shared-object-file-no-such-file-or-directory/) :
 
 ```
 apt-get update
