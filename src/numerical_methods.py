@@ -158,7 +158,8 @@ def compute_log_rho(x, phi1, b, c, type_of_transform):
     J = jax.jacobian(phi1, argnums=1)(x, b, c, type_of_transform) 
     f1 = 0.5*jnp.linalg.slogdet(J.T@J)[1]
     f2 = log_density(c) #User defined
-    return f1 - f2
+#     return f1 - f2
+    return -f1 + f2
 
 def compute_dcdb(x, phi1, b, c, type_of_transform): 
     """Computes the derivative of the smoothing parameter with respect to b given x.
