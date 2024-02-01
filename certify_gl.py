@@ -1,8 +1,8 @@
 from datetime import datetime, date
 import sys
 import os
-os.environ['CUDA_VISIBLE_DEVICES']="2"
-os.environ['CUDA_LAUNCH_BLOCKING']="1"
+# os.environ['CUDA_VISIBLE_DEVICES']="2"
+# os.environ['CUDA_LAUNCH_BLOCKING']="1"
 import json
 import yaml
 
@@ -11,7 +11,6 @@ import scipy
 import torch
 from torch.utils.data import DataLoader, Dataset
 import torchvision
-# from torchvision.models.resnet import resnet50
 
 from architectures import get_architecture
 from datasets_utils import get_dataset, DATASETS, get_num_classes, get_normalize_layer
@@ -68,9 +67,7 @@ def construct_bounds(ns, b_zero, x0, d, betas_list, type_of_transform, sigmas):
 def do_log(filename, string):
     with open(filename, "a") as f:
         print(string, file=f, flush=True)
-#     f = open(filename, "a")
-#     print(string, file=f, flush=True)
-#     f.close()
+        
 
 def calculate_general(config):
     
@@ -200,12 +197,15 @@ def calculate_general(config):
 
     # calculate TSS' CRA if applicable
     sb_tss = safe_beta_tss(type_of_transform, **sigmas)
-    hmin_tss = CertAccCheckerTSS(betas=betas_attack, hlist=hlist, xi=xi_tss, safe_beta_tss=sb_tss)
-    if hmin_tss:
-        cert_acc_tss = ((paCP > hmin_tss).astype("int") * isOkCP).mean()
-    else:
-        cert_acc_tss = 0
-        hmin_tss = None
+    cert_acc_tss = None
+    hmin_tss = None
+    if sb_tss:
+        hmin_tss = CertAccCheckerTSS(betas=betas_attack, hlist=hlist, xi=xi_tss, safe_beta_tss=sb_tss)
+        if hmin_tss:
+            cert_acc_tss = ((paCP > hmin_tss).astype("int") * isOkCP).mean()
+        else:
+            cert_acc_tss = 0
+            hmin_tss = None
     string = f"Cert Acc {type_of_transform} TSS is {cert_acc_tss}.  h_min is {hmin_tss}"
     print(string)
     do_log(filename, string)

@@ -1,0 +1,51 @@
+batch: 512
+n0: 200
+maxn: 1000
+alpha: 0.001
+adaptive: False
+log_dir: "./results/script_results/"
+NUM_IMAGES_FOR_TEST: 500
+
+
+device: "cuda"
+gpu: 1
+
+dataset: "imagenet"
+arch: "resnet50"
+num_classes: 1000
+base_classifier: "./tss_weights/imagenet/resnet50/expgaussian/lamb_10/consistency/checkpoint.pth.tar"
+
+
+transform: "blur_exp"
+dimenshion: 1
+b_zero: [0]
+x0: [1.1]
+
+
+sigmas:
+    sigma_b:
+    sigma_c:
+    sigma_tr:
+    sigma_gamma:
+    sigma_blur: 0.3
+
+ns: 20000
+betas_estimation:
+    beta0:
+        left: 0.0
+        right: 20.0
+        db: 21
+        
+betas_certification:
+    beta0:
+        left: 1.0
+        right: 16.0
+        db: 4
+        
+calculate_f_era: False
+calculate_h_era: False
+
+hlist:
+    left: 0.5
+    right: 1.0
+    n_steps: 1001 

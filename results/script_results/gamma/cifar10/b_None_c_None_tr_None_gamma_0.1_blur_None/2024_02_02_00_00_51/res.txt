@@ -1,0 +1,5 @@
+Benign accuracy 0.8
+Ordinary accuracy of Smoothed Classiifer 0.8
+Cert Acc gamma ours is 0.8.  h_min is 0.7315
+Cert Acc gamma TSS is None.  h_min is None
+Cert Acc gamma MP is 0.6.  h_min is 0.938
