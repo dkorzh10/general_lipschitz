@@ -278,7 +278,7 @@ class RayGaussian(Gaussian):
         r = np.random.rayleigh(scale=self.sigma)
         return r
     
-def consruct_attack(tr_type):
+def construct_attack(tr_type):
     if tr_type == "cb":
         return  attack_cb_torch
     elif tr_type == "b":
@@ -374,6 +374,7 @@ def attack_tbbc_torch(x, b):  # tr bl br c
 
 
 def safe_beta_tss(tr_type, sigma_b=None, sigma_c=None, sigma_tr=None, sigma_gamma=None, sigma_blur=None):
+    print("safe_beta_tss", sigma_b, sigma_c, sigma_tr, sigma_gamma, sigma_blur)
 # def safe_beta_tss(tr_type, sigma_c=None, sigma_b=None, sigma_tr=None):
     """
     Analytical certification criteria from the appendix of the TSS article
@@ -427,6 +428,14 @@ def safe_beta_tss(tr_type, sigma_b=None, sigma_c=None, sigma_tr=None, sigma_gamm
         q1 = np.exp(-B/sigma_blur)
 
         return h > (1 - q1 * q)
+    
+    def _safe_beta_tss_blur_exp(xi, h, beta, tau=sigma_blur):
+    
+        l1 = (beta[0] * tau)**2
+        l = np.sqrt(l1)
+        r = -np.log(2 - 2 * h)
+
+        return l<=r
 
     if tr_type == "cb":
         return _safe_beta_tss_bc
@@ -438,6 +447,8 @@ def safe_beta_tss(tr_type, sigma_b=None, sigma_c=None, sigma_tr=None, sigma_gamm
         return _safe_beta_tss_tr
     elif tr_type == "tbbc":
         return _safe_beta_tss_tbbc
+    elif tr_type == "blur_exp":
+        return _safe_beta_tss_blur_exp
     else:
         print("Not applicable, wrong name of transform or not added")
         return None
@@ -445,5 +456,12 @@ def safe_beta_tss(tr_type, sigma_b=None, sigma_c=None, sigma_tr=None, sigma_gamm
 
 
 
-
+def safe_beta_MP_gamma(xi, h, bs):
+    gam = bs[0]
+    
+    r_mp_g_r = lambda h: np.sqrt( - np.log(1-h)/np.log(2))
+    r_mp_g_l = lambda h: np.sqrt( - np.log(h)/np.log(2))
+    cond_l = r_mp_g_l(h)
+    cond_r = r_mp_g_r(h)
+    return cond_l < gam and gam < cond_r
 

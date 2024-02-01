@@ -216,7 +216,7 @@ def ERA_Only_ND(model, loader, attack, device, PSN=None, do_transform=False):
 
 
 
-def ERA_Only_For_Smoothed_ND(model, loader, attack, Phi, device, PSN=None, n0=100, maxn=2000, alpha=1e-3, batch_size=256, adaptive=False):
+def ERA_Only_For_Smoothed_ND(model, loader, attack, Phi, device, PSN=None, n0=100, maxn=2000, alpha=1e-3, batch_size=256, adaptive=False, num_classes=None):
     
     """
     Calculates empirically robust accuracy of SMOOTHED classifier h on set of attacks phi(x, beta), beta in B
@@ -236,8 +236,7 @@ def ERA_Only_For_Smoothed_ND(model, loader, attack, Phi, device, PSN=None, n0=10
                     b = torch.tensor(np.array(b))
                     attacked = attack(images, b=b)
 
-                    pABar, cAHat = certify(base_classifier = model,  x=attacked, label=labels, Phi=Phi, n0=n0,  
-                         maxn=maxn, alpha=alpha, batch_size=batch_size, adaptive=adaptive, device=device)
+                    pABar, cAHat = certify(base_classifier=model,  x=attacked, label=labels, Phi=Phi,    n0=n0,  maxn=maxn, alpha=alpha, batch_size=batch_size, adaptive=adaptive, device=device, num_classes=num_classes)
                     correct = int(cAHat == labels)
                     tensor[k]=tensor[k]* correct 
 

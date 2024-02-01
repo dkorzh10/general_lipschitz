@@ -1,7 +1,9 @@
+from datetime import datetime, date
 import sys
 import os
-os.environ['CUDA_VISIBLE_DEVICES']="1"
+os.environ['CUDA_VISIBLE_DEVICES']="2"
 os.environ['CUDA_LAUNCH_BLOCKING']="1"
+import json
 import yaml
 
 import click
@@ -41,7 +43,7 @@ def load_model(config):
     return model
 
 
-def construct_bounds(ns, b_zero, x0, d, betas_list, type_of_transform, sigmas=[1, 1, 1, 1, 1]):
+def construct_bounds(ns, b_zero, x0, d, betas_list, type_of_transform, sigmas):
     shape = [b.shape[0] for b in betas_list]
     print("I'm here")
     shape = tuple(shape)
@@ -63,6 +65,12 @@ def construct_bounds(ns, b_zero, x0, d, betas_list, type_of_transform, sigmas=[1
     hatg_int = csaps(betas_list, hat_g.reshape(shape)) #
     return xi, hatg_int
 
+def do_log(filename, string):
+    with open(filename, "a") as f:
+        print(string, file=f, flush=True)
+#     f = open(filename, "a")
+#     print(string, file=f, flush=True)
+#     f.close()
 
 def calculate_general(config):
     
@@ -71,7 +79,6 @@ def calculate_general(config):
     
     device = torch.device(config["device"])
     sigmas = config["sigmas"]
-    device = torch.device("cuda")
 
     n0 = config["n0"]
     maxn = config["maxn"]
@@ -81,10 +88,24 @@ def calculate_general(config):
     num_classes = config["num_classes"]
     
     
-    b_zero = jnp.array([1., 0.])
-    x0 = jnp.array([1.1, 1.3]) # Whatever
-    d = 2
+    b_zero = jnp.array(config["b_zero"])
+    x0 = jnp.array(config["x0"])
+    d = config["dimenshion"]
+    type_of_transform = config["transform"]
+    ns = config["ns"]
     
+    # creating logfile and saving used config
+    exp_start_time = "{:%Y_%m_%d_%H_%M_%S}".format(datetime.now())
+    sigmas_values = "b_{}_c_{}_tr_{}_gamma_{}_blur_{}".format(*sigmas.values())
+    exp_dir = os.path.join(config["log_dir"], type_of_transform, config["dataset"], sigmas_values, exp_start_time)
+    if not os.path.exists(exp_dir):
+        os.makedirs(exp_dir)
+    filename = os.path.join(exp_dir, "res.txt")
+    
+    with open(os.path.join(exp_dir, "used_config.yaml"), "w") as f:
+        yaml.dump(config, f)
+        
+
     # loading base classifier f
     model = load_model(config)
     
@@ -96,85 +117,113 @@ def calculate_general(config):
     
     
     # constructiong xi and hatg
-    b_zero = jnp.array(config["b_zero"])
-    x0 = jnp.array(config["x0"])
-    d = config["dimenshion"]
-    type_of_transform = config["transfrom"]
     
     betas_dict = config["betas_estimation"]
     betas_list = []
-    for key in betas_dict:
+    for i, key in enumerate(betas_dict):
+        if i >= d:
+            break
         beta = betas_dict[key]
         betas_list.append(jnp.linspace(beta["left"], beta["right"], beta["db"]))
         
     
-    xi, hatg_int = construct_bounds(ns, b_zero, x0, d, betas_list, type_of_transform)
+    xi, hatg_int = construct_bounds(ns, b_zero, x0, d, betas_list, type_of_transform, sigmas.values())
     
     # defining and loading attack
     attack = construct_attack(type_of_transform)
     
     # calculating benign (vanilla) accuracy of base classifier f
-    # Accuracy of non-smoothed model on original images
+    # accuracy of non-smoothed model on original images
     benign_acc = Accuracy(model, loader=ourdataloader, device=device)
-    print(f"Benign accuracy {benign_acc}")
+    benign_acc = benign_acc.mean()
+    string = f"Benign accuracy {benign_acc}"
+    print(string)
+    do_log(filename, string)
+    
     
     # creating attack set B to certify model on
     betas_attack_dict = config["betas_certification"]
     betas_attack_list = []
-    for key in betas_attack_dict:
+    for i, key in enumerate(betas_attack_dict):
+        if i >= d:
+            break
         beta_attack = betas_attack_dict[key]
-        betas_atttack_list.append(np.linspace(beta_attack["left"], beta_attack["right"], beta_attack["db"]))
+        betas_attack_list.append(np.linspace(beta_attack["left"], beta_attack["right"], beta_attack["db"]))
     betas_attack = np.asarray(list(map(np.array, itertools.product(*betas_attack_list))))
 
     # calculating statistics
-    paCP, isOkCP = pa_isOk_collector(model, loader=ourdataloader, Phi=Phi, device=device,
+    paCP, isOkCP = pa_isOk_collector(model, loader=ourdataloader, Phi=phi, device=device,
                            n0=n0, maxn=maxn, alpha=alpha, batch_size=bs, adaptive=adaptive,
                              num_classes=num_classes)
-    h_acc = np.mean(isOkCP)
-    print(f"Ordinary accuracy of Smoothed Classiifer {h_acc}")
+    res_dict = {}
+    res_dict["pa"] = list(paCP)
+    res_dict["is_ok"] = list(map(int, list(isOkCP)))
+    with open(os.path.join(exp_dir, "res_dict.json"), 'w') as f:
+        json.dump(res_dict, f, ensure_ascii=False)
     
+    
+    h_acc = np.mean(isOkCP)
+    string = f"Ordinary accuracy of Smoothed Classiifer {h_acc}"
+    print(string)
+    do_log(filename, string)
     
     # calculate empirically robust accuracy of f
     f_era = None
     if config["calculate_f_era"]:
         f_era = ERA_Only_ND(model, ourdataloader, attack=attack, device=device, PSN=betas_attack)
         print(f"f_era {f_era}")
-    
+        do_log(filename, string)
 
     # calculate empirically robust accuracy of h (might be very time consuming)
     h_era = None
     if config["calculate_f_era"]:
-        h_era = ERA_Only_For_Smoothed_ND(model, ourdataloader, attack, Phi, device, 
+        h_era = ERA_Only_For_Smoothed_ND(model, ourdataloader, attack, phi, device, 
                                  PSN=betas_attack, n0=n0, maxn=maxn, alpha=alpha, 
                                  batch_size=bs, adaptive=adaptive, num_classes=num_classes)
         print(f"h_era {h_era}")
-        
+        do_log(filename, string)
 
     # calulate our certified robust accuracy (CRA)
     hlist = np.linspace(config["hlist"]["left"], config["hlist"]["right"], config["hlist"]["n_steps"])
+    print(hlist)
     hmin_ours = CertAccChecker(safe_beta, betas=betas_attack, hlist=hlist, xi=xi, hatg_int=hatg_int)
-
+    print("HMIN!!!!!", hmin_ours)
     if hmin_ours:
         cert_acc_ours = ((paCP > hmin_ours).astype("int") * isOkCP).mean()
     else:
         cert_acc_ours = 0
         hmin_ours = None
-    print(f"Cert Acc {type_of_transform} ours is {cert_acc_ours}.  h_min is {hmin_ours}")
-    
+    string = f"Cert Acc {type_of_transform} ours is {cert_acc_ours}.  h_min is {hmin_ours}"
+    print(string)
+    do_log(filename, string)
+
 
     # calculate TSS' CRA if applicable
     sb_tss = safe_beta_tss(type_of_transform, **sigmas)
     hmin_tss = CertAccCheckerTSS(betas=betas_attack, hlist=hlist, xi=xi_tss, safe_beta_tss=sb_tss)
     if hmin_tss:
-        cert_acc_tss = ((paCP > hmin_tss * isOkCP).mean()
+        cert_acc_tss = ((paCP > hmin_tss).astype("int") * isOkCP).mean()
     else:
         cert_acc_tss = 0
         hmin_tss = None
-    print(f"Cert Acc {type_of_transform} ours is {cert_acc_tss}.  h_min is {hmin_tss}")
-    
-    
+    string = f"Cert Acc {type_of_transform} TSS is {cert_acc_tss}.  h_min is {hmin_tss}"
+    print(string)
+    do_log(filename, string)
+
+
     # calculate MP's CRA if applicable
-    
+    cert_acc_mp = None
+    hmin_mp = None
+    if type_of_transform in ["c", "gamma"]:
+        hmin_mp = CertAccCheckerTSS(betas=betas_attack, hlist=hlist, xi=None, safe_beta_tss=safe_beta_MP_gamma)
+        if hmin_mp:
+            cert_acc_mp = ((paCP > hmin_mp).astype("int") * isOkCP).mean()
+        else:
+            cert_acc_mp = 0
+            hmin_mp = None
+    string = f"Cert Acc {type_of_transform} MP is {cert_acc_mp}.  h_min is {hmin_mp}"
+    print(string)
+    do_log(filename, string)
     
 
     
@@ -183,13 +232,6 @@ def calculate_general(config):
 def main(config_path):
     with open(config_path, "r") as f:
         config = yaml.load(f, Loader=yaml.FullLoader)
-    print(config["b_zero"])
-    
-#     if config["gpu"]:
-#         os.environ['CUDA_VISIBLE_DEVICES']=str(config["gpu"])
-#         os.environ['CUDA_LAUNCH_BLOCKING']="1"
-        
-
 
     calculate_general(config)
 

@@ -1,0 +1,5 @@
+Benign accuracy 0.442
+Ordinary accuracy of Smoothed Classiifer 0.446
+Cert Acc blur_exp ours is 0.398.  h_min is 0.9755
+Cert Acc blur_exp TSS is 0.418.  h_min is 0.7755000000000001
+Cert Acc blur_exp MP is None.  h_min is None

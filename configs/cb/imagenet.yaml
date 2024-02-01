@@ -22,8 +22,9 @@ sigmas:
     sigma_b: 0.6
     sigma_c: 0.6
     sigma_tr:
-    sigma_blur:
     sigma_gamma:
+    sigma_blur:
+
 ns: 20000
 betas_estimation:
     beta0:

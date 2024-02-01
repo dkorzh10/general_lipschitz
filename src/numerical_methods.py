@@ -258,10 +258,13 @@ def g_to_hat_g(g_interpolated, beta, bzero):
 # ## safe_beta given functions $\xi$,  and points $h(\beta)$, $\beta$ returns if $h$ is certified at $\beta$
 
 def safe_beta(xi, h, hat_g, beta):
-    return hat_g(beta) <= -xi(1-h)+xi(0.5)
+    l = hat_g(beta)
+    r = -xi(1-h)+xi(0.5)
+#     print(l, r)
+    return l <= r
 
 
-def construct_gamma(sigma_b=0.4, sigma_c=0.4, sigma_tr=30, sigma_gamma=1.1, sigma_blur=30):
+def construct_gamma(sigma_b=None, sigma_c=None, sigma_tr=None, sigma_gamma=None, sigma_blur=None):
     def _gamma(x, b, c, tr_type:str):
         print(tr_type)
         if tr_type == 'b':  # brightness
@@ -395,7 +398,7 @@ def construct_gamma(sigma_b=0.4, sigma_c=0.4, sigma_tr=30, sigma_gamma=1.1, sigm
 
         if tr_type == 'blur_exp': 
             # Norm(0, 1) -> Laplace(1/sigma_blur) -> Exp(sigma_blur)
-            b0 = b[0] + norm_to_exp_1d(c[0], sigma_blur)
+            b0 = b[0] + norm_to_exp_1d(c[0] / DEFAULT_SIGMA, sigma_blur)
 
             return jnp.array([b0])
 

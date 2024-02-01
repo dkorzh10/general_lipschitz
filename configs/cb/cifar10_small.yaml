@@ -1,10 +1,10 @@
 batch: 512
 n0: 200
-maxn: 1000
+maxn: 512
 alpha: 0.001
 adaptive: False
-log_dir: "./logs/script_results/"
-NUM_IMAGES_FOR_TEST: 500
+log_dir: "./results/script_results/"
+NUM_IMAGES_FOR_TEST: 5
 
 
 device: "cuda"
@@ -29,16 +29,16 @@ sigmas:
     sigma_gamma:
     sigma_blur:
 
-ns: 20000
+ns: 5000
 betas_estimation:
     beta0:
         left: 0.5
         right: 1.5
-        db: 41
+        db: 11
     beta1:
         left: -0.5
         right: 0.5
-        db: 43
+        db: 13
         
 betas_certification:
     beta0:
@@ -50,7 +50,7 @@ betas_certification:
         right: 0.4
         db: 41
         
-calculate_f_era: True
+calculate_f_era: False
 calculate_h_era: True
 
 hlist:
