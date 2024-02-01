@@ -5,11 +5,12 @@ import jax
 import jax.numpy as jnp
 import kornia
 import numpy as np
+import scipy
 import cv2
 
 
 def construct_phi(tr_type, device, sigma_b=0.4, sigma_c=0.4, sigma_tr=30, sigma_gamma=1.1, sigma_blur=30):
-
+    print(sigma_b, sigma_c, sigma_tr, sigma_gamma, sigma_blur)
     def _phi_bc_torch_batch_and_noise(x):
         q = (torch.randn(len(x)) * sigma_c).to(device)
         q1 = (torch.randn(len(x)) * sigma_b).to(device)
@@ -181,9 +182,9 @@ def construct_phi(tr_type, device, sigma_b=0.4, sigma_c=0.4, sigma_tr=30, sigma_
     
     if tr_type =="cb":
         return  _phi_bc_torch_batch_and_noise
-    if tr_type =="b":
+    elif tr_type =="b":
         return  _phi_b_torch_batch_and_noise
-    if tr_type =="c":
+    elif tr_type =="c":
         return  _phi_c_torch_batch_and_noise
     elif tr_type == "gc":
         return _phi_gc_torch_batch_and_noise
@@ -277,7 +278,37 @@ class RayGaussian(Gaussian):
         r = np.random.rayleigh(scale=self.sigma)
         return r
     
-
+def consruct_attack(tr_type):
+    if tr_type == "cb":
+        return  attack_cb_torch
+    elif tr_type == "b":
+        return  attack_b_torch
+    elif tr_type =="c":
+        return  attack_c_torch
+    elif tr_type == "gc":
+        return attack_gc_torch
+    elif tr_type == "bt":
+        return attack_bt_torch
+    elif tr_type == "ct":
+        return attack_ct_torch
+    elif tr_type == "cbt":
+        return attack_cbt_torch
+    elif tr_type == "tr":
+        return attack_tr_torch
+    elif tr_type == "gamma":
+        return attack_gamma_torch
+    elif tr_type == "tbbc":
+        return attack_tbbc_torch
+    elif tr_type == "tbbc_rayleigh":
+        return attack_tbbc_torch
+    elif tr_type == "tbbc_exp":
+        return attack_tbbc_torch
+    elif tr_type == "blur_ray":
+        return attack_blur_cv2
+    elif tr_type == "blur_exp":
+        return attack_blur_cv2
+    else:
+        raise Exception("Sorry, invalid transfrom name or it is not added to src")
 
 
 def attack_cb_torch(x, b):
@@ -323,8 +354,6 @@ def attack_cbt_torch(x, b):
 def attack_gamma_torch(x, b):
     return x ** b[0]
 
-
-
 def attack_blur_cv2(x, b):
     r = b 
     input = x[0].cpu().numpy()
@@ -333,7 +362,15 @@ def attack_blur_cv2(x, b):
     out = torch.from_numpy(out.transpose(2, 0, 1))
     return out[None, :].to(x.device)
 
+def attack_tbbc_torch(x, b):  # tr bl br c
 
+#     x = x.to(device)
+    translation = torch.tensor([[b[0].item(), b[1].item()]]).to(torch.float).to(x.device) 
+    x = kornia.geometry.transform.translate(x, translation, padding_mode='reflection')
+    x = attack_blur_cv2(x, b = b[2])
+    x = x + torch.tensor(b[3].item())
+    x = torch.tensor(b[4].item()) * x
+    return x
 
 
 def safe_beta_tss(tr_type, sigma_b=None, sigma_c=None, sigma_tr=None, sigma_gamma=None, sigma_blur=None):
@@ -374,8 +411,22 @@ def safe_beta_tss(tr_type, sigma_b=None, sigma_c=None, sigma_tr=None, sigma_gamm
     
         l1 = (beta[0]/tau)**2
         l = np.sqrt(l1)
-        r = 1/2*(xi(h) - xi(1-h))
+        r = 1/2 * (xi(h) - xi(1-h))
         return l<=r
+    
+    def _safe_beta_tss_tbbc(xi, h, beta):
+        Tx = beta[0]
+        Ty = beta[1]
+        B = beta[2]
+        b = beta[3]
+        k = np.log(beta[4])
+        q = k**2/sigma_c**2 + b**2/(np.exp(-2*k) * sigma_b**2) + (Tx**2+Ty**2)/(sigma_tr**2)
+        q = scipy.stats.norm.cdf(q)
+        q = 1-q
+        sb = 1  # sigma_blur
+        q1 = np.exp(-B/sigma_blur)
+
+        return h > (1 - q1 * q)
 
     if tr_type == "cb":
         return _safe_beta_tss_bc
@@ -385,6 +436,11 @@ def safe_beta_tss(tr_type, sigma_b=None, sigma_c=None, sigma_tr=None, sigma_gamm
         return _safe_beta_tss_bt
     elif tr_type == "tr":
         return _safe_beta_tss_tr
+    elif tr_type == "tbbc":
+        return _safe_beta_tss_tbbc
+    else:
+        print("Not applicable, wrong name of transform or not added")
+        return None
 
 
 

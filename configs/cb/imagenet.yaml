@@ -1,0 +1,46 @@
+batch: 64
+n0: 200
+maxn: 1000
+alpha: 0.001
+adaptive: False
+log_dir: "./logs/script_results/"
+NUM_IMAGES_FOR_TEST: 500
+
+
+base_classifier: "./checkpoints/brightness/checkpoint.pth.tar"
+device: "cuda"
+gpu: 1
+
+dataset: "imagenet"
+arch: "resnet50"
+
+transform: "cb"
+dimenshion: 2
+
+
+sigmas:
+    sigma_b: 0.6
+    sigma_c: 0.6
+    sigma_tr:
+    sigma_blur:
+    sigma_gamma:
+ns: 20000
+betas_estimation:
+    beta0:
+        left: 0.5
+        right: 1.5
+        db: 21
+    beta1:
+        left: -0.5
+        right: 0.5
+        db: 23
+        
+betas_certification:
+    beta0:
+        left: 1.4
+        right: 1.4
+        db: 35
+    beta1:
+        left: -0.4
+        right: 0.4
+        db: 41

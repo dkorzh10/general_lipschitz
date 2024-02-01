@@ -1,9 +1,17 @@
+device: "cuda"
+gpu: 5
+sigma_b: 0.6
+sigma_c: 0.6
+sigma_tr: no
+
+arch: "resnet50"
+base_classifier: "../../checkpoints/brightness/checkpoint.pth.tar"
+
+
 corrupt: "contrast"
 noise_sd: 0.6
 noise_dst: "gaussian"
 partial_max: 0.4
 dataset: "imagenet"
-base_classifier: "../../checkpoints/brightness/checkpoint.pth.tar"
-device: "cuda"
-arch: "resnet50"
-gpu: 5
+
+

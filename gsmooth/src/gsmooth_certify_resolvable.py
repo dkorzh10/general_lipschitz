@@ -52,7 +52,7 @@ parser.add_argument("--skip", type=int, default=30
                     , help="how many examples to skip")
 parser.add_argument("--max", type=int, default=-1, help="stop after this many examples")
 parser.add_argument("--split", choices=["train", "test"], default="test", help="train or test set")
-parser.add_argument("--N0", type=int, default=100)
+parser.add_argument("--N0", type=int, default=200)
 parser.add_argument("--N", type=int, default=1000, help="number of samples to use")
 parser.add_argument("--alpha", type=float, default=1e-3, help="failure probability")
 parser.add_argument('--corrupt',type=str,default=['none','gaussian_blur','motion_blur','zoom_blur','rotate','translate','contrast','pixelate','jpeg',][1],

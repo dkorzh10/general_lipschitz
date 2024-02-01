@@ -340,7 +340,7 @@ def construct_gamma(sigma_b=0.4, sigma_c=0.4, sigma_tr=30, sigma_gamma=1.1, sigm
 
             return jnp.array([b0,b1,b2,b3,b4])
 
-        if tr_type == 'tbbc_ray': #translation -  -Blur- Brightness - Contrast
+        if tr_type == 'tbbc_ray':
 
             c0 = c[0] / DEFAULT_SIGMA * sigma_tr
             c1 = c[1] / DEFAULT_SIGMA * sigma_tr
@@ -360,7 +360,7 @@ def construct_gamma(sigma_b=0.4, sigma_c=0.4, sigma_tr=30, sigma_gamma=1.1, sigm
 
             return jnp.array([b0,b1,b2,b3,b4])
 
-        if tr_type == 'tr': #translation -  -Blur- Brightness - Contrast
+        if tr_type == 'tr':
 
             c0 = c[0]*sigma_tr
             c1 = c[1]*sigma_tr
