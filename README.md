@@ -3,10 +3,9 @@
 
 Algorithms for certification DL models to sematic transformations.
 
-To start, 
-create an image with `nvcr.io/nvidia/pytorch:23.10-py3` container, install required libraries from `requirements.txt`, set suitable path to ImageNet dataset in `datasets.py`, and set up Jupyter lab.
+To start, create an image with `nvcr.io/nvidia/pytorch:23.10-py3` container, install required libraries from `requirements.txt`, set suitable path to ImageNet dataset in `datasets.py`, and set up Jupyter lab. In case there is a lack of specific librarym install it additionally. Put in `checkpoints` directory models' weights from [here](https://drive.google.com/file/d/1gQVjx6WBh9PacDJDDdrHjEjM87o_MQEd/view?usp=sharing). Put in `new_results` directory models' weights  from [here](https://drive.google.com/file/d/1P-ukSuRU6cBCeiG1K4ymZsZAEfvwOraU/view?usp=sharing). Put in `tss_weights` directory models' weights  from TTS link [here](https://drive.google.com/file/d/1tW4bTnoxlAFA0KeZGQdHr6Rr9weXJSDS/view?usp=sharing). Don't forget to unzip the downoloaded files.
 
-To obtain results, run through `notebooks/main_notebook_rename.ipynb` and `notebooks/CT_CBT_TBlBC_rename.ipynb`. You should choose the perturbation you want to certify the model to in `gamma` (for numericall calculations of required functions), choose parameters of smoothing distributions (scale parameters), create or initialize two function: attack (for ERA) and smoothing phi (for certification and augmentations during training):
+To obtain presented in the article results (ours, TSS', MP's), go through `notebooks/main_notebook_1.ipynb` and `notebooks/main_notebook_2.ipynb`. You should choose the perturbation you want to certify the model to in `gamma` (for numericall calculations of required functions), choose parameters of smoothing distributions (scale parameters), create or initialize two function: attack (for ERA) and smoothing phi (for certification and augmentations during training):
 For example, for Gamma and Contrast
 ```python
 sigma_c = 0.1
@@ -17,7 +16,7 @@ def gamma(x, b, c, tr_type:str):
         c0 = c[0] / DEFAULT_SIGMA
         c1 = c[1] / DEFAULT_SIGMA * sigma_c
 
-        c0 = norm_to_ray_1d(c0, sigma_gamma)s
+        c0 = norm_to_ray_1d(c0, sigma_gamma)
 
         b1 = b[0]*c0
         b2 = b[1]**c0 * norm_to_lognorm(c1)
@@ -26,6 +25,7 @@ def gamma(x, b, c, tr_type:str):
 def attack_gc_torch(x, b):
     return (x ** b[0]) * b[1]
 
+# for augmentations
 def _phi_gc_torch_batch_and_noise(x, sigma_g=sigma_gamma, sigma_c=sigma_c):
     q = (torch.randn(len(x)) * sigma_g).to(device)
     q_= (torch.randn(len(x)) * sigma_g).to(device)
@@ -88,7 +88,9 @@ attack = attack_gc_torch
 res_gc = construct_bounds(ns, b_zero, x0, d, betas_list, type_of_transform)
 xi, hatg_int = res_gc
 ```
-See `notebooks/Training_more_robust_models_TBBC_AND_BT.ipynb` as an example of training procedure (or do it as [TSS](https://github.com/AI-secure/semantic-randomized-smoothing) prescribes, but we have optimized training for 1 GPU and sometimes different transforms and smoothing distributions). You should create 2 function for specific attacks and smoothing in order to augment data during training or run `train.py`, e.g.
+and procceed with smoothed classifier predictions collectionusing `pa_isOk_collector` and obtaining minimum value of $h$ in`CertAccChecker`, that is required to accomplish certification conditiom.
+
+For training your own models use `train.py`, e.g.
 ```
 python train.py --run_name cifar10_trans  --dataset cifar10 --arch cifar_resnet110 --type tr --epochs 150  --lr_step_size 50 --batch 512 --device cuda:0 --lr 0.01 --tr 15.0 --lbd 10
 
@@ -96,11 +98,7 @@ python train.py --run_name cifar100_cb  --dataset cifar100 --arch cifar100_resne
 
 ```
 
-Put in `checkpoints` directory models' weights  from [here](https://drive.google.com/file/d/1gQVjx6WBh9PacDJDDdrHjEjM87o_MQEd/view?usp=sharing). Put in `new_results` directory models' weights  from [here](https://drive.google.com/file/d/1P-ukSuRU6cBCeiG1K4ymZsZAEfvwOraU/view?usp=sharing). Put in `tss_weights` directory models' weights  from TTS link [here](https://drive.google.com/file/d/1tW4bTnoxlAFA0KeZGQdHr6Rr9weXJSDS/view?usp=sharing). Don't forget to unzip the downoloaded files.
-
-
-Our code is partially based on [TSS' implementation](https://github.com/AI-secure/semantic-randomized-smoothing). You can read their Readme also for some details.
-
+To obtain Gsmooth results, move to `gsmooth/src`, choose or create a proper config,  and run `python gsmooth_certify_resolvable.py configs/CONFIG_NAME.yaml`. Gsmooth CIFAR-10 and CIFAR-100 results are presented in `gsmooth_X.ipynb` notebooks.
 
 
 In case of problems with cv2,
@@ -110,9 +108,9 @@ pip uninstall opencv-python-headless
 
 python -m site
 ```
-Delete all cv2, opencv..  dirs from /opt/conda/lib/pythonX.Y/site-packages
+Delete all cv2, opencv..  dirs from /opt/conda/lib/python3.Y/site-packages
 
-follow the [instructions](https://itsmycode.com/importerror-libgl-so-1-cannot-open-shared-object-file-no-such-file-or-directory/):
+follow the [instructions](https://itsmycode.com/importerror-libgl-so-1-cannot-open-shared-object-file-no-such-file-or-directory/) or from [there](https://github.com/opencv/opencv-python/issues/884):
 
 ```
 apt-get update

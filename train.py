@@ -1,7 +1,7 @@
 import os
 import sys
 
-os.environ['WANDB_API_KEY'] = 'de1ceccfa66f1ba2bad667f4a2fd7666be9813fb'
+os.environ['WANDB_API_KEY'] = ''
 os.environ['WANDB_PROJECT'] = 'lipschitz'
 sys.path.append('./..')
 
@@ -18,7 +18,7 @@ import torch
 import torchvision
 import kornia
 import math
-import imgaug
+# import imgaug
 import argparse
 import torch.nn.functional as F
 import wandb
@@ -340,8 +340,6 @@ if __name__ == '__main__':
     
     
     wandb.init(project="lipschitz")
-    
-    #spray and pray:
     
     for epoch in range(args.epochs):
         before = time()

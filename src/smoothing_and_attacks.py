@@ -138,7 +138,7 @@ def construct_phi(tr_type, device, sigma_b=0.4, sigma_c=0.4, sigma_tr=30, sigma_
         out = c * out
         return out
     
-    def _phi_tbbc_exp_torch_batch_and_noise(x): #trans bright blur contrast, but it was supossed to be translation-BLUR-BRIGHT-contrast
+    def _phi_tbbc_exp_torch_batch_and_noise(x):
         x = x.to(device)
         c1 = (torch.randn(len(x)) * sigma_tr).long()*1.0
         c2 = (torch.randn(len(x)) * sigma_tr).long()*1.0
@@ -281,7 +281,6 @@ class RayGaussian(Gaussian):
 
 
 def attack_cb_torch(x, b):
-#     return (x * torch.tensor(b[0].item()) + torch.tensor(b[1].item()))#.flatten()
     return x * b[0]+ b[1]
 
 def attack_b_torch(x, b):
@@ -291,7 +290,6 @@ def attack_c_torch(x, b):
     return b[0] * x
 
 def attack_gc_torch(x, b):
-#     return (x**(torch.tensor(b[0].item()))) * torch.tensor(b[1].item())
     return (x ** b[0]) * b[1]
 
 def attack_bt_torch(x, b):
@@ -314,7 +312,7 @@ def attack_tr_torch(x, b): #translation
 
 
 
-def attack_cbt_torch(x, b): #trans bright blur contrast
+def attack_cbt_torch(x, b):
     x = b[0] * x
     x = x + b[1]
     translation = torch.tensor([[b[2], b[3]]]).float.to(x.device) #torch.tensor()
@@ -323,7 +321,6 @@ def attack_cbt_torch(x, b): #trans bright blur contrast
 
 
 def attack_gamma_torch(x, b):
-#     return x ** (torch.tensor(b[0].item()))
     return x ** b[0]
 
 
@@ -339,8 +336,13 @@ def attack_blur_cv2(x, b):
 
 
 
-
-def safe_beta_tss(tr_type, sigma_c=None, sigma_b=None, sigma_tr=None):
+def safe_beta_tss(tr_type, sigma_b=None, sigma_c=None, sigma_tr=None, sigma_gamma=None, sigma_blur=None):
+# def safe_beta_tss(tr_type, sigma_c=None, sigma_b=None, sigma_tr=None):
+    """
+    Analytical certification criteria from the appendix of the TSS article
+    
+    """
+    
     def _safe_beta_tss_bc(xi, h, beta, sigma=sigma_c, tau=sigma_b):  # sigma=sigma_c, tau=sigma_b
         l = (jnp.log(beta[0]) / sigma) ** 2 + (beta[1]*beta[0] / tau) ** 2
         l = jnp.sqrt(l)

@@ -20,23 +20,18 @@ normal_samples = jax.random.normal(key, [100_000])
 def norm_to_exp(c, lam):
     idx = np.random.randint(0, len(normal_samples), (c.shape[0], 4))
     q = normal_samples[idx]
-#     return jax.numpy.abs(c[0] * q[0] - q[1] * q[2]) / lam
-    
     return jax.numpy.abs(q[:, 0] * q[:, 1] - q[:, 2] * q[:, 3]) / lam
 
 
 def norm_to_ray(c, sigma):
     idx = np.random.randint(0, len(normal_samples), (c.shape[0], 2))
     c01 = normal_samples[idx] * sigma 
-#     c = c * sigma
     return jnp.sqrt(c01[:, 0] ** 2 + c01[:, 1] ** 2)
 
 
 def norm_to_exp_1d(c, lam):
-
     idx = np.random.randint(0, len(normal_samples), 4)
     q = normal_samples[idx]
-    
     return jax.numpy.abs(c * q[1] - q[2] * q[3]) / lam
 
 
@@ -45,24 +40,6 @@ def norm_to_ray_1d(c, sigma):
     c01 = normal_samples[idx] * sigma 
     c = c * sigma
     return jnp.sqrt(c ** 2 + c01[1] ** 2)
-
-# def norm_to_exp(a):
-#     return jnp.log(2/jax.lax.erfc(a/jnp.sqrt(2)))
-
-# def norm_to_exp(a):
-#     lam = 1
-# #     q = jnp.sqrt(2 * DEFAULT_SIGMA ** 2 * [-1/2 * jnp.log(2 * jnp.pi * DEFAULT_SIGMA ** 2) - a])
-# # jnp.exp(-q/ 30) / 30
-#     h = 0.5 * (1 + jax.lax.erf(a / jnp.sqrt(2) / DEFAULT_SIGMA))
-#     return - lam * jnp.log(1 - h)
-
-# def norm_to_exp1(a, lam):
-#     h = 0.5 * (1 + jax.lax.erf(a / jnp.sqrt(2) / DEFAULT_SIGMA))
-#     return - lam * jnp.log(1 - h)
-
-# def norm_to_ray(a):
-#     return jnp.sqrt(-jnp.log((1-0.5*jax.lax.erfc(-a/jnp.sqrt(2)))**2))    
-
 
 def norm_to_lognorm(a):
     return jnp.exp(a)
@@ -80,15 +57,11 @@ def attack_add(x, b):
 
 
 def phi_bc(x, c):
-    #return x*jnp.exp(c[0]) + c[1]
-    #return  (x*norm_to_ray(c[0]) + c[1])
     return (x*norm_to_lognorm(c[0]) + c[1]).flatten()
-    #return x**(norm_to_lognorm(c[0])) + c[1]
-    #return x*c[0] + c[1]
+
 def attack_bc(x, b):
     return (x*b[0] + b[1]).flatten()
-    #return soft_clip(x*b[0] + b[1])
-    #return x**b[0] + b[1]
+
 def phi_gamma(x, c):
     return (x**(norm_to_exp(c[0]))).flatten()
 
@@ -102,6 +75,9 @@ def phi_gamma_b(x, c):
 def attack_gamma_b(x, b):
     return x**(b[0]) + b[1]
 
+
+
+
 def sample_normal(key, sz):
     return jax.random.normal(key, sz)
 
@@ -109,19 +85,12 @@ def sample_lognormal(key, sz):
     res = jax.random.normal(key, sz)
     return jnp.exp(res)
 
-# def sample_rayleigh(key, sz):
-#     res = jax.random.normal(key, sz)
-#     return norm_to_ray(res)
-
 def sample_rayleigh(key, sz):
     res = jax.random.normal(key, sz)
     res1 = jax.random.normal(key, sz)
     q = jnp.sqrt(res**2 + res1**2)
     return q
 
-# def sample_exponential(key, sz):
-#     res = jax.random.normal(key, sz)
-#     return norm_to_exp(res)
 
 def logpdf_normal(a):
     return jax.scipy.stats.norm.logpdf(a)
@@ -154,11 +123,9 @@ def compute_log_rho(x, phi1, b, c, type_of_transform):
     """Computes the log-density at the point
         y = phi(attack(x, b), c), where c is sampled from the density above
     """
-    #x1 = attack(x, b)
     J = jax.jacobian(phi1, argnums=1)(x, b, c, type_of_transform) 
     f1 = 0.5*jnp.linalg.slogdet(J.T@J)[1]
     f2 = log_density(c) #User defined
-#     return f1 - f2
     return -f1 + f2
 
 def compute_dcdb(x, phi1, b, c, type_of_transform): 
@@ -254,6 +221,9 @@ def pseudo_xi(norm_bound):
 
 
 def pxi_to_xi(norm_bound):
+    """
+    Interpolate pseudo xi to obtain 'analytical' xi
+    """
     x_axis, pxi = pseudo_xi(norm_bound)
     pxi_int = scipy.interpolate.interp1d(x_axis, pxi)
     return x_axis,pxi_int
@@ -294,11 +264,11 @@ def safe_beta(xi, h, hat_g, beta):
 def construct_gamma(sigma_b=0.4, sigma_c=0.4, sigma_tr=30, sigma_gamma=1.1, sigma_blur=30):
     def _gamma(x, b, c, tr_type:str):
         print(tr_type)
-        if tr_type == 'b':
+        if tr_type == 'b':  # brightness
             c = c / DEFAULT_SIGMA * sigma_b
             return b+c
         
-        if tr_type == 'c':
+        if tr_type == 'c':  # contrast
             c = norm_to_lognorm(c / DEFAULT_SIGMA * sigma_c)
             return c * b
 
@@ -323,7 +293,7 @@ def construct_gamma(sigma_b=0.4, sigma_c=0.4, sigma_tr=30, sigma_gamma=1.1, sigm
 
 
         if tr_type == 'bt': 
-
+            # brightness translation
             c0 = c[0] / DEFAULT_SIGMA * sigma_b
             c1 = c[1] / DEFAULT_SIGMA * sigma_tr
             c2 = c[2] / DEFAULT_SIGMA * sigma_tr
@@ -332,7 +302,7 @@ def construct_gamma(sigma_b=0.4, sigma_c=0.4, sigma_tr=30, sigma_gamma=1.1, sigm
             b2 = b[1] + c1 
             b3 = b[2] + c2
             return jnp.array([b1, b2, b3])
-        if tr_type == 'cbt': #
+        if tr_type == 'cbt':
 
             c0 = norm_to_lognorm(c[0]*sigma_c)
             c1 = c[1]*sigma_b
@@ -425,12 +395,6 @@ def construct_gamma(sigma_b=0.4, sigma_c=0.4, sigma_tr=30, sigma_gamma=1.1, sigm
 
         if tr_type == 'blur_exp': 
             # Norm(0, 1) -> Laplace(1/sigma_blur) -> Exp(sigma_blur)
-    #         idx = np.random.randint(0, len(normal_samples), 2)
-    #         c01, c02 = normal_samples[idx]
-    #         c0 = c[0] * sigma_blur 
-    #         c01 = c01 * sigma_blur
-    #         c02 = c02 * sigma_blur
-    #         b0 = b[0] + jnp.sqrt(c01 ** 2 + c02 ** 2)
             b0 = b[0] + norm_to_exp_1d(c[0], sigma_blur)
 
             return jnp.array([b0])
@@ -439,6 +403,5 @@ def construct_gamma(sigma_b=0.4, sigma_c=0.4, sigma_tr=30, sigma_gamma=1.1, sigm
             c0 = c[0] / DEFAULT_SIGMA
             c0 = norm_to_ray_1d(c0, sigma_blur)
             b0 = b[0] + c0
-    #         b0 = b[0] + norm_to_ray(c[0] / DEFAULT_SIGMA) * sigma_blur
             return jnp.array([b0])
     return _gamma
