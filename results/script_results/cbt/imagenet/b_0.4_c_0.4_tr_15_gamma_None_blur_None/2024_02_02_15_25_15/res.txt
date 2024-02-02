@@ -1,0 +1,5 @@
+Benign accuracy 0.674
+Ordinary accuracy of Smoothed Classiifer 0.618
+Cert Acc cbt ours is 0.016.  h_min is 0.895
+Cert Acc cbt TSS is None.  h_min is None
+Cert Acc cbt MP is None.  h_min is None

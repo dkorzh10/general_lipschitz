@@ -123,7 +123,7 @@ def calculate_general(config):
         beta = betas_dict[key]
         betas_list.append(jnp.linspace(beta["left"], beta["right"], beta["db"]))
         
-    
+    assert((len(betas_list) == d) and len(betas_list) == len(b_zero))
     xi, hatg_int = construct_bounds(ns, b_zero, x0, d, betas_list, type_of_transform, sigmas.values())
     
     # defining and loading attack

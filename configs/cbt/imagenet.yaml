@@ -17,15 +17,15 @@ base_classifier: "./checkpoints/brightness/checkpoint.pth.tar"
 
 
 transform: "cbt"
-dimenshion: 3
-b_zero: [0, 0, 0]
-x0: [1., 3, 3.0]
+dimenshion: 4
+b_zero: [1.0, 0, 0, 0]
+x0: [0.2 ,1.0, 3., 1]
 
 
 sigmas:
     sigma_b: 0.4
     sigma_c: 0.4
-    sigma_tr: 15
+    sigma_tr: 10
     sigma_gamma:
     sigma_blur:
 
@@ -34,19 +34,19 @@ betas_estimation:
     beta0:
         left: 0.7
         right: 1.3
-        db: 11
+        db: 7
     beta1:
         left: -0.3
         right: 0.3
-        db: 13
+        db: 7
     beta2:
-        left: -30
-        right: 30
-        db: 9
+        left: -45
+        right: 45
+        db: 5
     beta3:
         left: -30
         right: 30
-        db: 9
+        db: 5
         
 betas_certification:
     beta0:

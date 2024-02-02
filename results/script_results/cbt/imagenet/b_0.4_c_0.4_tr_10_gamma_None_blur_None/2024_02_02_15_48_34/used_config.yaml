@@ -1,0 +1,72 @@
+NUM_IMAGES_FOR_TEST: 500
+adaptive: false
+alpha: 0.001
+arch: resnet50
+b_zero:
+- 1.0
+- 0
+- 0
+- 0
+base_classifier: ./checkpoints/brightness/checkpoint.pth.tar
+batch: 512
+betas_certification:
+  beta0:
+    db: 17
+    left: 0.8
+    right: 1.2
+  beta1:
+    db: 13
+    left: -0.2
+    right: 0.2
+  beta2:
+    db: 11
+    left: -15
+    right: 15
+  beta3:
+    db: 11
+    left: -15
+    right: 15
+betas_estimation:
+  beta0:
+    db: 7
+    left: 0.7
+    right: 1.3
+  beta1:
+    db: 7
+    left: -0.3
+    right: 0.3
+  beta2:
+    db: 5
+    left: -45
+    right: 45
+  beta3:
+    db: 5
+    left: -30
+    right: 30
+calculate_f_era: false
+calculate_h_era: false
+dataset: imagenet
+device: cuda
+dimenshion: 4
+gpu: 1
+hlist:
+  left: 0.5
+  n_steps: 1001
+  right: 1.0
+log_dir: ./results/script_results/
+maxn: 1000
+n0: 200
+ns: 20000
+num_classes: 1000
+sigmas:
+  sigma_b: 0.4
+  sigma_blur: null
+  sigma_c: 0.4
+  sigma_gamma: null
+  sigma_tr: 10
+transform: cbt
+x0:
+- 0.2
+- 1.0
+- 3.0
+- 1
