@@ -1,0 +1,9 @@
+corrupt: "translate"
+noise_sd: 15
+noise_dst: "gaussian"
+partial_max: 20
+dataset: "cifar10"
+base_classifier: "../../tss_weights/cifar10/resnet110/translation/noise_15.0/consistency/checkpoint.pth.tar"
+device: "cuda"
+arch: "cifar_resnet110"
+gpu: 5

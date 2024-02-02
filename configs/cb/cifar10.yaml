@@ -3,7 +3,7 @@ n0: 200
 maxn: 1000
 alpha: 0.001
 adaptive: False
-log_dir: "./logs/script_results/"
+log_dir: "./results/script_results/"
 NUM_IMAGES_FOR_TEST: 500
 
 
@@ -34,24 +34,24 @@ betas_estimation:
     beta0:
         left: 0.5
         right: 1.5
-        db: 41
+        db: 40
     beta1:
         left: -0.5
         right: 0.5
-        db: 43
+        db: 42
         
 betas_certification:
     beta0:
-        left: 1.4
+        left: 0.6
         right: 1.4
         db: 35
     beta1:
         left: -0.4
         right: 0.4
-        db: 41
+        db: 31
         
-calculate_f_era: True
-calculate_h_era: True
+calculate_f_era: False
+calculate_h_era: False
 
 hlist:
     left: 0.5

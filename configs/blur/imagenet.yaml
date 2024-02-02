@@ -33,13 +33,13 @@ ns: 20000
 betas_estimation:
     beta0:
         left: 0.0
-        right: 20.0
+        right: 10.0
         db: 21
         
 betas_certification:
     beta0:
         left: 1.0
-        right: 16.0
+        right: 4.0
         db: 4
         
 calculate_f_era: False

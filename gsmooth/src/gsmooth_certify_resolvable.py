@@ -4,8 +4,6 @@ sys.path.append('./..')
 sys.path.append('./img2img')
 
 import os
-os.environ['CUDA_VISIBLE_DEVICES']="5"
-os.environ['CUDA_LAUNCH_BLOCKING']="1"
 
 import argparse
 import datetime
@@ -154,12 +152,6 @@ def main(config_path):
     args.base_classifier = config["base_classifier"]
     args.device = config["device"]
     args.arch = config["arch"]
-    
-#     if config["gpu"]:
-#         os.environ['CUDA_VISIBLE_DEVICES']=str(config["gpu"])
-#         os.environ['CUDA_LAUNCH_BLOCKING']="1"
-        
-
 
     calculate_gsmooth(args)
 

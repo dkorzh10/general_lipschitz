@@ -374,8 +374,6 @@ def attack_tbbc_torch(x, b):  # tr bl br c
 
 
 def safe_beta_tss(tr_type, sigma_b=None, sigma_c=None, sigma_tr=None, sigma_gamma=None, sigma_blur=None):
-    print("safe_beta_tss", sigma_b, sigma_c, sigma_tr, sigma_gamma, sigma_blur)
-# def safe_beta_tss(tr_type, sigma_c=None, sigma_b=None, sigma_tr=None):
     """
     Analytical certification criteria from the appendix of the TSS article
     

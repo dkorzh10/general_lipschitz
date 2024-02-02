@@ -1,11 +1,11 @@
-NUM_IMAGES_FOR_TEST: 5
+NUM_IMAGES_FOR_TEST: 500
 adaptive: false
 alpha: 0.001
-arch: cifar_resnet110
+arch: cifar100_resnet110
 b_zero:
 - 1
 - 0
-base_classifier: ./tss_weights/cifar10/resnet110/brightness-contrast/0.3_0.3/consistency/checkpoint.pth.tar
+base_classifier: ./new_results/cifar100_resnet110_cifar100_cb_cifar100_cb_checkpoint.pth.tar
 batch: 512
 betas_certification:
   beta0:
@@ -13,21 +13,21 @@ betas_certification:
     left: 1.4
     right: 1.4
   beta1:
-    db: 41
+    db: 31
     left: -0.4
     right: 0.4
 betas_estimation:
   beta0:
-    db: 11
+    db: 40
     left: 0.5
     right: 1.5
   beta1:
-    db: 13
+    db: 42
     left: -0.5
     right: 0.5
 calculate_f_era: false
-calculate_h_era: true
-dataset: cifar10
+calculate_h_era: false
+dataset: cifar100
 device: cuda
 dimenshion: 2
 gpu: 1
@@ -35,11 +35,11 @@ hlist:
   left: 0.5
   n_steps: 1001
   right: 1.0
-log_dir: ./results/script_results/
-maxn: 512
+log_dir: ./logs/script_results/
+maxn: 1000
 n0: 200
-ns: 5000
-num_classes: 10
+ns: 20000
+num_classes: 100
 sigmas:
   sigma_b: 0.3
   sigma_blur: null

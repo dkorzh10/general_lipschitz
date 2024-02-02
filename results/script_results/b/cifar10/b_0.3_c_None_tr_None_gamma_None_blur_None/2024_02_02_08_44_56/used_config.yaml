@@ -1,0 +1,42 @@
+NUM_IMAGES_FOR_TEST: 500
+adaptive: false
+alpha: 0.001
+arch: cifar_resnet110
+b_zero:
+- 0.0
+base_classifier: ./tss_weights/cifar10/resnet110/brightness-contrast/0.3_0.3/consistency/checkpoint.pth.tar
+batch: 512
+betas_certification:
+  beta0:
+    db: 35
+    left: -0.4
+    right: 0.4
+betas_estimation:
+  beta0:
+    db: 51
+    left: -0.5
+    right: 0.5
+calculate_f_era: false
+calculate_h_era: false
+dataset: cifar10
+device: cuda
+dimenshion: 1
+gpu: 1
+hlist:
+  left: 0.5
+  n_steps: 1001
+  right: 1.0
+log_dir: ./results/script_results/
+maxn: 1000
+n0: 200
+ns: 20000
+num_classes: 10
+sigmas:
+  sigma_b: 0.3
+  sigma_blur: null
+  sigma_c: null
+  sigma_gamma: null
+  sigma_tr: null
+transform: b
+x0:
+- 0.3

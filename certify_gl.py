@@ -182,9 +182,7 @@ def calculate_general(config):
 
     # calulate our certified robust accuracy (CRA)
     hlist = np.linspace(config["hlist"]["left"], config["hlist"]["right"], config["hlist"]["n_steps"])
-    print(hlist)
     hmin_ours = CertAccChecker(safe_beta, betas=betas_attack, hlist=hlist, xi=xi, hatg_int=hatg_int)
-    print("HMIN!!!!!", hmin_ours)
     if hmin_ours:
         cert_acc_ours = ((paCP > hmin_ours).astype("int") * isOkCP).mean()
     else:

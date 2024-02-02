@@ -1,0 +1,15 @@
+device: "cuda"
+gpu: 5
+
+
+dataset: "cifar10"
+arch: "cifar_resnet110"
+base_classifier: "../../tss_weights/cifar10/resnet110/brightness-contrast/0.3_0.3/consistency/checkpoint.pth.tar"
+
+
+corrupt: "contrast"
+noise_sd: 0.3
+noise_dst: "gaussian"
+partial_max: 0.4
+
+

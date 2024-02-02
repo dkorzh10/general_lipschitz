@@ -1,0 +1,52 @@
+NUM_IMAGES_FOR_TEST: 500
+adaptive: false
+alpha: 0.001
+arch: resnet50
+b_zero:
+- 1
+- 1
+base_classifier: ./checkpoints/_GCGCGC_checkpoint.pth.tar
+batch: 512
+betas_certification:
+  beta0:
+    db: 35
+    left: 0.8
+    right: 1.4
+  beta1:
+    db: 31
+    left: 0.6
+    right: 2.0
+betas_estimation:
+  beta0:
+    db: 51
+    left: 0.4
+    right: 2.2
+  beta1:
+    db: 53
+    left: 0.4
+    right: 2.2
+calculate_f_era: false
+calculate_h_era: false
+dataset: imagenet
+device: cuda
+dimenshion: 2
+gpu: 1
+hlist:
+  left: 0.5
+  n_steps: 1001
+  right: 1.0
+log_dir: ./results/script_results/
+maxn: 1000
+n0: 200
+ns: 20000
+num_classes: 1000
+sigmas:
+  sigma_b: null
+  sigma_blur: null
+  sigma_c: 0.1
+  sigma_gamma: 0.1
+  sigma_tr: null
+transform: gc
+x0:
+- 1.1
+- 1.3

@@ -1,0 +1,2 @@
+Benign accuracy 0.87
+Ordinary accuracy of Smoothed Classiifer 0.872

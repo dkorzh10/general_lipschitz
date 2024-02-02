@@ -1,0 +1,67 @@
+batch: 512
+n0: 200
+maxn: 1000
+alpha: 0.001
+adaptive: False
+log_dir: "./results/script_results/"
+NUM_IMAGES_FOR_TEST: 500
+
+
+device: "cuda"
+gpu: 1
+
+dataset: "imagenet"
+arch: "resnet50"
+num_classes: 1000
+base_classifier: "./checkpoints/BrightTrans_08_408_checkpoint.pth.tar"
+
+
+transform: "bt"
+dimenshion: 3
+b_zero: [0, 0, 0]
+x0: [1., 3, 3.0]
+
+
+sigmas:
+    sigma_b: 0.4
+    sigma_c: 
+    sigma_tr: 30
+    sigma_gamma:
+    sigma_blur:
+
+ns: 20000
+betas_estimation:
+    beta0:
+        left: -0.3
+        right: 0.3
+        db: 17
+    beta1:
+        left: -80
+        right: 80
+        db: 15
+    beta2:
+        left: -80
+        right: 80
+        db: 15
+        
+betas_certification:
+    beta0:
+        left: -0.2
+        right: 0.2
+        db: 11
+    beta1:
+        left: -56
+        right: 56
+        db: 11
+    beta2:
+        left: -56
+        right: 56
+        db: 11
+        
+calculate_f_era: False
+calculate_h_era: False
+
+hlist:
+    left: 0.5
+    right: 1.0
+    n_steps: 1001 

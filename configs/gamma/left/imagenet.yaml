@@ -1,0 +1,50 @@
+batch: 512
+n0: 200
+maxn: 1000
+alpha: 0.001
+adaptive: False
+log_dir: "./results/script_results/"
+NUM_IMAGES_FOR_TEST: 500
+
+
+device: "cuda"
+
+dataset: "imagenet"
+arch: "resnet50"
+num_classes: 1000
+base_classifier: "./checkpoints/_GCGCGC_checkpoint.pth.tar"
+
+
+transform: "gamma"
+dimenshion: 1
+b_zero: [1.0]
+x0: [1.1]
+
+
+sigmas:
+    sigma_b:
+    sigma_c:
+    sigma_tr:
+    sigma_gamma: 0.1
+    sigma_blur:
+
+ns: 20000
+betas_estimation:
+    beta0:
+        left: 0.4
+        right: 1.0
+        db: 101
+        
+betas_certification:
+    beta0:
+        left: 0.5
+        right: 1.0
+        db: 21
+        
+calculate_f_era: False
+calculate_h_era: False
+
+hlist:
+    left: 0.5
+    right: 1.0
+    n_steps: 1001 

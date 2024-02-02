@@ -1,0 +1,62 @@
+NUM_IMAGES_FOR_TEST: 500
+adaptive: false
+alpha: 0.001
+arch: resnet50
+b_zero:
+- 1.0
+- 0
+- 0
+base_classifier: ./checkpoints/trans_blur_bright_contrast/TransBrightBlurContrast_40_04_10_04_checkpoint.pth.tar
+batch: 512
+betas_certification:
+  beta0:
+    db: 11
+    left: 0.8
+    right: 1.2
+  beta1:
+    db: 11
+    left: -25
+    right: 25
+  beta2:
+    db: 11
+    left: -25
+    right: 25
+betas_estimation:
+  beta0:
+    db: 13
+    left: 0.5
+    right: 1.5
+  beta1:
+    db: 17
+    left: -60
+    right: 60
+  beta2:
+    db: 17
+    left: -60
+    right: 60
+calculate_f_era: false
+calculate_h_era: false
+dataset: imagenet
+device: cuda
+dimenshion: 3
+gpu: 1
+hlist:
+  left: 0.5
+  n_steps: 1001
+  right: 1.0
+log_dir: ./results/script_results/
+maxn: 1000
+n0: 200
+ns: 20000
+num_classes: 1000
+sigmas:
+  sigma_b: null
+  sigma_blur: null
+  sigma_c: 0.4
+  sigma_gamma: null
+  sigma_tr: 30
+transform: ct
+x0:
+- 1.1
+- 0.3
+- -10.0
