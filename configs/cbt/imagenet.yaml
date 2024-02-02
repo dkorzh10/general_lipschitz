@@ -16,7 +16,7 @@ num_classes: 1000
 base_classifier: "./checkpoints/brightness/checkpoint.pth.tar"
 
 
-transform: "bt"
+transform: "сbt"
 dimenshion: 3
 b_zero: [0, 0, 0]
 x0: [1., 3, 3.0]
