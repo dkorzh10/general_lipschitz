@@ -13,49 +13,57 @@ gpu: 1
 dataset: "imagenet"
 arch: "resnet50"
 num_classes: 1000
-# base_classifier: "./checkpoints/trans_blur_bright_contrast/TransBrightBlurContrast_40_04_10_04_checkpoint.pth.tar"
 base_classifier: "./checkpoints/brightness/checkpoint.pth.tar"
 
-transform: "ct"
+
+transform: "bt"
 dimenshion: 3
-b_zero: [1.0, 0, 0]
-x0: [1.1, 0.3, -10.0]
+b_zero: [0, 0, 0]
+x0: [1., 3, 3.0]
 
 
 sigmas:
-    sigma_b:
+    sigma_b: 0.4
     sigma_c: 0.4
-    sigma_tr: 30
+    sigma_tr: 15
     sigma_gamma:
     sigma_blur:
 
 ns: 20000
 betas_estimation:
     beta0:
-        left: 0.5
-        right: 1.5
+        left: 0.7
+        right: 1.3
         db: 11
     beta1:
-        left: -60
-        right: 60
+        left: -0.3
+        right: 0.3
         db: 13
     beta2:
-        left: -60
-        right: 60
-        db: 13
+        left: -30
+        right: 30
+        db: 9
+    beta3:
+        left: -30
+        right: 30
+        db: 9
         
 betas_certification:
     beta0:
         left: 0.8
         right: 1.2
-        db: 11
+        db: 17
     beta1:
-        left: -25
-        right: 25
-        db: 11
+        left: -0.2
+        right: 0.2
+        db: 13
     beta2:
-        left: -25
-        right: 25
+        left: -15
+        right: 15
+        db: 11
+    beta3:
+        left: -15
+        right: 15
         db: 11
         
 calculate_f_era: False

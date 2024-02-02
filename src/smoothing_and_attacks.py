@@ -202,6 +202,8 @@ def construct_phi(tr_type, device, sigma_b=0.4, sigma_c=0.4, sigma_tr=30, sigma_
         return _phi_tbbc_torch_batch_and_noise
     elif tr_type == "tbbc_rayleigh":
         return _phi_tbbc_torch_batch_and_noise
+    elif tr_type == "tbbc_ray":
+        return _phi_tbbc_torch_batch_and_noise
     elif tr_type == "tbbc_exp":
         return _phi_tbbc_exp_torch_batch_and_noise
     elif tr_type == "blur_ray":
@@ -300,6 +302,8 @@ def construct_attack(tr_type):
     elif tr_type == "tbbc":
         return attack_tbbc_torch
     elif tr_type == "tbbc_rayleigh":
+        return attack_tbbc_torch
+    elif tr_type == "tbbc_ray":
         return attack_tbbc_torch
     elif tr_type == "tbbc_exp":
         return attack_tbbc_torch

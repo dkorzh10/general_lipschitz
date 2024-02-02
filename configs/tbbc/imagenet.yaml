@@ -1,0 +1,83 @@
+batch: 512
+n0: 200
+maxn: 1000
+alpha: 0.001
+adaptive: False
+log_dir: "./results/script_results/"
+NUM_IMAGES_FOR_TEST: 500
+
+
+device: "cuda"
+gpu: 1
+
+dataset: "imagenet"
+arch: "resnet50"
+num_classes: 1000
+base_classifier: "./tss_weights/imagenet/resnet50/universal/consistency/noise_setting_A_clean/checkpoint.pth.tar"
+comment: "trans_x-trans_y-blur-bright-contrast"
+
+transform: "tbbc_ray"
+dimenshion: 5
+b_zero: [0.0, 0.0, 0.0,0.0, 1.0]
+x0: [1.0,3.0, 3., 1, 1.1]
+
+
+sigmas:
+    sigma_b: 0.3
+    sigma_c: 0.3
+    sigma_tr: 10
+    sigma_gamma:
+    sigma_blur: 1
+
+ns: 20000
+betas_estimation:
+    beta0:
+        left: -5
+        right: 5
+        db: 3
+    beta1:
+        left: -5
+        right: 5
+        db: 3
+    beta2:
+        left: 0
+        right: 3
+        db: 3
+    beta3:
+        left: -0.2
+        right: 0.2
+        db: 3
+    beta4:
+        left: 0.9
+        right: 1.1
+        db: 3
+        
+betas_certification:
+    beta0:
+        left: -3
+        right: 3
+        db: 5
+    beta1:
+        left: -3
+        right: 3
+        db: 5
+    beta2:
+        left: 1
+        right: 3
+        db: 3
+    beta3:
+        left: -0.1
+        right: 0.1
+        db: 5
+    beta4:
+        left: 0.95
+        right: 1.05
+        db: 5
+        
+calculate_f_era: False
+calculate_h_era: False
+
+hlist:
+    left: 0.5
+    right: 1.0
+    n_steps: 1001 
